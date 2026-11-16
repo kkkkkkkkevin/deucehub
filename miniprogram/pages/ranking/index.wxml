@@ -1,0 +1,63 @@
+<!-- pages/ranking/index.wxml - 积分排行页 -->
+<view class="ranking-page">
+  <!-- 顶部标题 -->
+  <view class="ranking-header">
+    <view class="header-rainbow"></view>
+    <view class="header-content">
+      <view class="header-title">界外网球积分榜</view>
+      <view class="header-subtitle">OUT TENNIS RANKING</view>
+    </view>
+  </view>
+
+  <!-- 切换 -->
+  <view class="tab-switcher">
+    <view class="tab-item {{activeTab === 'totalPoints' ? 'active' : ''}}" bindtap="onSwitchTab" data-tab="totalPoints">总积分</view>
+    <view class="tab-item {{activeTab === 'eventPoints' ? 'active' : ''}}" bindtap="onSwitchTab" data-tab="eventPoints">本站积分</view>
+  </view>
+
+  <!-- 前三名领奖台 -->
+  <view class="podium" wx:if="{{rankings.length >= 3}}">
+    <view class="podium-item podium-2">
+      <view class="podium-avatar silver-bg">{{rankings[1].player[0]}}</view>
+      <view class="podium-name">{{rankings[1].player}}</view>
+      <view class="podium-score">{{rankings[1][activeTab]}}</view>
+      <view class="podium-medal silver">2</view>
+      <view class="podium-bar bar-2"></view>
+    </view>
+    <view class="podium-item podium-1">
+      <view class="podium-avatar gold-bg">{{rankings[0].player[0]}}</view>
+      <view class="podium-name">{{rankings[0].player}}</view>
+      <view class="podium-score">{{rankings[0][activeTab]}}</view>
+      <view class="podium-medal gold">1</view>
+      <view class="podium-bar bar-1"></view>
+    </view>
+    <view class="podium-item podium-3">
+      <view class="podium-avatar bronze-bg">{{rankings[2].player[0]}}</view>
+      <view class="podium-name">{{rankings[2].player}}</view>
+      <view class="podium-score">{{rankings[2][activeTab]}}</view>
+      <view class="podium-medal bronze">3</view>
+      <view class="podium-bar bar-3"></view>
+    </view>
+  </view>
+
+  <!-- 4名以后列表 -->
+  <view class="ranking-table">
+    <view class="table-header">
+      <text class="col-rank">排名</text>
+      <text class="col-player">选手</text>
+      <text class="col-score">{{activeTab === 'totalPoints' ? '总积分' : '本站积分'}}</text>
+    </view>
+    <view class="table-row" wx:for="{{rankings}}" wx:key="player" wx:if="{{index >= 3}}">
+      <text class="col-rank rank-num">{{index + 1}}</text>
+      <view class="col-player">
+        <view class="player-avatar">{{item.player[0]}}</view>
+        <text class="player-name">{{item.player}}</text>
+      </view>
+      <text class="col-score">{{item[activeTab]}}</text>
+    </view>
+  </view>
+
+  <view class="ranking-footer">
+    <text>数据更新时间：{{updateTime}}</text>
+  </view>
+</view>

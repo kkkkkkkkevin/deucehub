@@ -1,0 +1,39 @@
+<!-- pages/mbti/quiz.wxml - 答题页 -->
+<view class="quiz-page">
+  <!-- 顶部进度 -->
+  <view class="quiz-header">
+    <view class="progress-bar">
+      <view class="progress-fill" style="width: {{progressPercent}}%"></view>
+    </view>
+    <view class="progress-info">
+      <text class="progress-text">{{currentIndex + 1}} / {{totalQuestions}}</text>
+      <text class="dim-tag">{{currentDim.name}}</text>
+    </view>
+  </view>
+
+  <!-- 题目区 -->
+  <view class="question-area {{animClass}}">
+    <view class="question-num">Q{{currentIndex + 1}}</view>
+    <view class="question-title">{{currentQuestion.title}}</view>
+
+    <!-- 选项 -->
+    <view class="options">
+      <view class="option-card {{selectedOption === 'A' ? 'selected-a' : ''}}" bindtap="onSelect" data-option="A">
+        <view class="option-badge">{{currentQuestion.optionA.code}}</view>
+        <text class="option-text">{{currentQuestion.optionA.text}}</text>
+        <view class="option-check" wx:if="{{selectedOption === 'A'}}">✓</view>
+      </view>
+      <view class="option-card {{selectedOption === 'B' ? 'selected-b' : ''}}" bindtap="onSelect" data-option="B">
+        <view class="option-badge">{{currentQuestion.optionB.code}}</view>
+        <text class="option-text">{{currentQuestion.optionB.text}}</text>
+        <view class="option-check" wx:if="{{selectedOption === 'B'}}">✓</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部导航 -->
+  <view class="quiz-footer">
+    <button class="btn-back" wx:if="{{currentIndex > 0}}" bindtap="onPrev">← 上一题</button>
+    <view class="footer-hint" wx:else>选择你的答案自动进入下一题</view>
+  </view>
+</view>

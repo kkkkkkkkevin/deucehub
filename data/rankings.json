@@ -1,0 +1,982 @@
+{
+  "updatedAt": "2026-08-14",
+  "updatedBy": "admin",
+  "tournaments": [
+    {
+      "id": "t1",
+      "name": "6/28 赢满贯500赛",
+      "date": "2026-06-28"
+    },
+    {
+      "id": "t2",
+      "name": "7/11 伟劲500赛",
+      "date": "2026-07-11"
+    },
+    {
+      "id": "t3",
+      "name": "7/18 得客会250赛",
+      "date": "2026-07-18"
+    },
+    {
+      "id": "t4",
+      "name": "7/25 得客会16签250赛",
+      "date": "2026-07-25"
+    },
+    {
+      "id": "t5",
+      "name": "7/26 川沙久逸8签250赛",
+      "date": "2026-07-26"
+    },
+    {
+      "id": "t6",
+      "name": "8/1 伟劲12签500赛",
+      "date": "2026-08-01"
+    }
+  ],
+  "players": [
+    {
+      "id": "RT267103",
+      "name": "辛辣",
+      "events": [
+        108,
+        195,
+        0,
+        0,
+        0,
+        500
+      ],
+      "total": 803,
+      "rank": 1,
+      "change": 5,
+      "prevRank": 6
+    },
+    {
+      "id": "RT267102",
+      "name": "Jessica",
+      "events": [
+        0,
+        325,
+        0,
+        0,
+        0,
+        195
+      ],
+      "total": 520,
+      "rank": 2,
+      "change": 1,
+      "prevRank": 3
+    },
+    {
+      "id": "RT268001",
+      "name": "YZQ",
+      "events": [
+        0,
+        0,
+        0,
+        500,
+        0,
+        0
+      ],
+      "total": 500,
+      "rank": 3,
+      "change": null,
+      "prevRank": null
+    },
+    {
+      "id": "RT267101",
+      "name": "文昭",
+      "events": [
+        0,
+        500,
+        0,
+        0,
+        0,
+        0
+      ],
+      "total": 500,
+      "rank": 4,
+      "change": -3,
+      "prevRank": 1
+    },
+    {
+      "id": "RT266101",
+      "name": "虎",
+      "events": [
+        500,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "total": 500,
+      "rank": 5,
+      "change": -3,
+      "prevRank": 2
+    },
+    {
+      "id": "RT266102",
+      "name": "十月十七",
+      "events": [
+        325,
+        0,
+        0,
+        0,
+        54,
+        0
+      ],
+      "total": 379,
+      "rank": 6,
+      "change": -2,
+      "prevRank": 4
+    },
+    {
+      "id": "RT268011",
+      "name": "Jeffery",
+      "events": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        325
+      ],
+      "total": 325,
+      "rank": 7,
+      "change": null,
+      "prevRank": null
+    },
+    {
+      "id": "RT267105",
+      "name": "JerrQ",
+      "events": [
+        195,
+        108,
+        0,
+        0,
+        0,
+        0
+      ],
+      "total": 303,
+      "rank": 8,
+      "change": -3,
+      "prevRank": 5
+    },
+    {
+      "id": "RT267112",
+      "name": "Nelson",
+      "events": [
+        32,
+        60,
+        0,
+        0,
+        54,
+        108
+      ],
+      "total": 254,
+      "rank": 9,
+      "change": 10,
+      "prevRank": 19
+    },
+    {
+      "id": "RT267201",
+      "name": "Edward",
+      "events": [
+        0,
+        0,
+        250,
+        0,
+        0,
+        0
+      ],
+      "total": 250,
+      "rank": 10,
+      "change": -3,
+      "prevRank": 7
+    },
+    {
+      "id": "RT268901",
+      "name": "Lay",
+      "events": [
+        0,
+        0,
+        0,
+        0,
+        250,
+        0
+      ],
+      "total": 250,
+      "rank": 11,
+      "change": null,
+      "prevRank": null
+    },
+    {
+      "id": "RT268009",
+      "name": "lay",
+      "events": [
+        0,
+        0,
+        0,
+        0,
+        250,
+        0
+      ],
+      "total": 250,
+      "rank": 12,
+      "change": null,
+      "prevRank": null
+    },
+    {
+      "id": "RT267203",
+      "name": "娃娃鱼",
+      "events": [
+        0,
+        0,
+        90,
+        150,
+        0,
+        0
+      ],
+      "total": 240,
+      "rank": 13,
+      "change": 8,
+      "prevRank": 21
+    },
+    {
+      "id": "RT267110",
+      "name": "PasteJ",
+      "events": [
+        60,
+        60,
+        0,
+        0,
+        98,
+        0
+      ],
+      "total": 218,
+      "rank": 14,
+      "change": 0,
+      "prevRank": 14
+    },
+    {
+      "id": "RT267111",
+      "name": "蜜瓜",
+      "events": [
+        60,
+        60,
+        0,
+        0,
+        98,
+        0
+      ],
+      "total": 218,
+      "rank": 15,
+      "change": 0,
+      "prevRank": 15
+    },
+    {
+      "id": "RT266104",
+      "name": "Joey",
+      "events": [
+        195,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "total": 195,
+      "rank": 16,
+      "change": -8,
+      "prevRank": 8
+    },
+    {
+      "id": "RT268012",
+      "name": "Liam",
+      "events": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        195
+      ],
+      "total": 195,
+      "rank": 17,
+      "change": null,
+      "prevRank": null
+    },
+    {
+      "id": "RT267104",
+      "name": "阿杰鲁",
+      "events": [
+        0,
+        195,
+        0,
+        0,
+        0,
+        0
+      ],
+      "total": 195,
+      "rank": 18,
+      "change": -9,
+      "prevRank": 9
+    },
+    {
+      "id": "RT267106",
+      "name": "BQ",
+      "events": [
+        60,
+        108,
+        0,
+        0,
+        0,
+        0
+      ],
+      "total": 168,
+      "rank": 19,
+      "change": -9,
+      "prevRank": 10
+    },
+    {
+      "id": "RT267109",
+      "name": "Danwen",
+      "events": [
+        108,
+        60,
+        0,
+        0,
+        0,
+        0
+      ],
+      "total": 168,
+      "rank": 20,
+      "change": -9,
+      "prevRank": 11
+    },
+    {
+      "id": "RT267107",
+      "name": "Nico",
+      "events": [
+        60,
+        108,
+        0,
+        0,
+        0,
+        0
+      ],
+      "total": 168,
+      "rank": 21,
+      "change": -9,
+      "prevRank": 12
+    },
+    {
+      "id": "RT268010",
+      "name": "高山流水",
+      "events": [
+        0,
+        0,
+        0,
+        0,
+        163,
+        0
+      ],
+      "total": 163,
+      "rank": 22,
+      "change": null,
+      "prevRank": null
+    },
+    {
+      "id": "RT267202",
+      "name": "劳伦斯",
+      "events": [
+        0,
+        0,
+        150,
+        0,
+        0,
+        0
+      ],
+      "total": 150,
+      "rank": 23,
+      "change": -10,
+      "prevRank": 13
+    },
+    {
+      "id": "RT267214",
+      "name": "阿驰",
+      "events": [
+        0,
+        0,
+        20,
+        90,
+        0,
+        0
+      ],
+      "total": 110,
+      "rank": 24,
+      "change": 15,
+      "prevRank": 39
+    },
+    {
+      "id": "RT268013",
+      "name": "Denny",
+      "events": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        108
+      ],
+      "total": 108,
+      "rank": 25,
+      "change": null,
+      "prevRank": null
+    },
+    {
+      "id": "RT268015",
+      "name": "Lawrence",
+      "events": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        108
+      ],
+      "total": 108,
+      "rank": 26,
+      "change": null,
+      "prevRank": null
+    },
+    {
+      "id": "RT268014",
+      "name": "RR",
+      "events": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        108
+      ],
+      "total": 108,
+      "rank": 27,
+      "change": null,
+      "prevRank": null
+    },
+    {
+      "id": "RT266107",
+      "name": "商店",
+      "events": [
+        108,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "total": 108,
+      "rank": 28,
+      "change": -12,
+      "prevRank": 16
+    },
+    {
+      "id": "RT266108",
+      "name": "张丞磊",
+      "events": [
+        108,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "total": 108,
+      "rank": 29,
+      "change": -12,
+      "prevRank": 17
+    },
+    {
+      "id": "RT267108",
+      "name": "王zy",
+      "events": [
+        0,
+        108,
+        0,
+        0,
+        0,
+        0
+      ],
+      "total": 108,
+      "rank": 30,
+      "change": -12,
+      "prevRank": 18
+    },
+    {
+      "id": "RT268004",
+      "name": "MengTaiQi",
+      "events": [
+        0,
+        0,
+        0,
+        45,
+        0,
+        60
+      ],
+      "total": 105,
+      "rank": 31,
+      "change": null,
+      "prevRank": null
+    },
+    {
+      "id": "RT267209",
+      "name": "Eden",
+      "events": [
+        0,
+        0,
+        20,
+        20,
+        0,
+        60
+      ],
+      "total": 100,
+      "rank": 32,
+      "change": 3,
+      "prevRank": 35
+    },
+    {
+      "id": "RT267211",
+      "name": "呱呱",
+      "events": [
+        0,
+        60,
+        20,
+        20,
+        0,
+        0
+      ],
+      "total": 100,
+      "rank": 33,
+      "change": -11,
+      "prevRank": 22
+    },
+    {
+      "id": "RT267204",
+      "name": "大板娜娜",
+      "events": [
+        0,
+        0,
+        90,
+        0,
+        0,
+        0
+      ],
+      "total": 90,
+      "rank": 34,
+      "change": -14,
+      "prevRank": 20
+    },
+    {
+      "id": "RT268002",
+      "name": "气泡猪头",
+      "events": [
+        0,
+        0,
+        0,
+        90,
+        0,
+        0
+      ],
+      "total": 90,
+      "rank": 35,
+      "change": null,
+      "prevRank": null
+    },
+    {
+      "id": "RT267206",
+      "name": "Matthew",
+      "events": [
+        0,
+        0,
+        45,
+        45,
+        0,
+        0
+      ],
+      "total": 90,
+      "rank": 36,
+      "change": -9,
+      "prevRank": 27
+    },
+    {
+      "id": "RT266116",
+      "name": "小仂",
+      "events": [
+        32,
+        0,
+        0,
+        0,
+        54,
+        0
+      ],
+      "total": 86,
+      "rank": 37,
+      "change": -6,
+      "prevRank": 31
+    },
+    {
+      "id": "RT266114",
+      "name": "淞",
+      "events": [
+        32,
+        0,
+        0,
+        0,
+        54,
+        0
+      ],
+      "total": 86,
+      "rank": 38,
+      "change": -6,
+      "prevRank": 32
+    },
+    {
+      "id": "RT267212",
+      "name": "浚河",
+      "events": [
+        0,
+        0,
+        20,
+        45,
+        0,
+        0
+      ],
+      "total": 65,
+      "rank": 39,
+      "change": -1,
+      "prevRank": 38
+    },
+    {
+      "id": "RT267115",
+      "name": "Frank",
+      "events": [
+        0,
+        60,
+        0,
+        0,
+        0,
+        0
+      ],
+      "total": 60,
+      "rank": 40,
+      "change": -17,
+      "prevRank": 23
+    },
+    {
+      "id": "RT268016",
+      "name": "Leon",
+      "events": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        60
+      ],
+      "total": 60,
+      "rank": 41,
+      "change": null,
+      "prevRank": null
+    },
+    {
+      "id": "RT268017",
+      "name": "Velant",
+      "events": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        60
+      ],
+      "total": 60,
+      "rank": 42,
+      "change": null,
+      "prevRank": null
+    },
+    {
+      "id": "RT267113",
+      "name": "大川",
+      "events": [
+        0,
+        60,
+        0,
+        0,
+        0,
+        0
+      ],
+      "total": 60,
+      "rank": 43,
+      "change": -19,
+      "prevRank": 24
+    },
+    {
+      "id": "RT267114",
+      "name": "阳",
+      "events": [
+        0,
+        60,
+        0,
+        0,
+        0,
+        0
+      ],
+      "total": 60,
+      "rank": 44,
+      "change": -19,
+      "prevRank": 25
+    },
+    {
+      "id": "RT268003",
+      "name": "Bryan",
+      "events": [
+        0,
+        0,
+        0,
+        45,
+        0,
+        0
+      ],
+      "total": 45,
+      "rank": 45,
+      "change": null,
+      "prevRank": null
+    },
+    {
+      "id": "RT267207",
+      "name": "Darryl",
+      "events": [
+        0,
+        0,
+        45,
+        0,
+        0,
+        0
+      ],
+      "total": 45,
+      "rank": 46,
+      "change": -20,
+      "prevRank": 26
+    },
+    {
+      "id": "RT267208",
+      "name": "小野",
+      "events": [
+        0,
+        0,
+        45,
+        0,
+        0,
+        0
+      ],
+      "total": 45,
+      "rank": 47,
+      "change": -19,
+      "prevRank": 28
+    },
+    {
+      "id": "RT267205",
+      "name": "小韩",
+      "events": [
+        0,
+        0,
+        45,
+        0,
+        0,
+        0
+      ],
+      "total": 45,
+      "rank": 48,
+      "change": -19,
+      "prevRank": 29
+    },
+    {
+      "id": "RT267215",
+      "name": "Corey",
+      "events": [
+        0,
+        0,
+        20,
+        20,
+        0,
+        0
+      ],
+      "total": 40,
+      "rank": 49,
+      "change": -16,
+      "prevRank": 33
+    },
+    {
+      "id": "RT267210",
+      "name": "ivan",
+      "events": [
+        0,
+        0,
+        20,
+        20,
+        0,
+        0
+      ],
+      "total": 40,
+      "rank": 50,
+      "change": -13,
+      "prevRank": 37
+    },
+    {
+      "id": "RT266115",
+      "name": "Evan",
+      "events": [
+        32,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "total": 32,
+      "rank": 51,
+      "change": -21,
+      "prevRank": 30
+    },
+    {
+      "id": "RT268007",
+      "name": "Casper",
+      "events": [
+        0,
+        0,
+        0,
+        20,
+        0,
+        0
+      ],
+      "total": 20,
+      "rank": 52,
+      "change": null,
+      "prevRank": null
+    },
+    {
+      "id": "RT267216",
+      "name": "Derek",
+      "events": [
+        0,
+        0,
+        20,
+        0,
+        0,
+        0
+      ],
+      "total": 20,
+      "rank": 53,
+      "change": -19,
+      "prevRank": 34
+    },
+    {
+      "id": "RT267213",
+      "name": "Sid",
+      "events": [
+        0,
+        0,
+        20,
+        0,
+        0,
+        0
+      ],
+      "total": 20,
+      "rank": 54,
+      "change": -18,
+      "prevRank": 36
+    },
+    {
+      "id": "RT268006",
+      "name": "乐添",
+      "events": [
+        0,
+        0,
+        0,
+        20,
+        0,
+        0
+      ],
+      "total": 20,
+      "rank": 55,
+      "change": null,
+      "prevRank": null
+    },
+    {
+      "id": "RT268005",
+      "name": "杨乐多",
+      "events": [
+        0,
+        0,
+        0,
+        20,
+        0,
+        0
+      ],
+      "total": 20,
+      "rank": 56,
+      "change": null,
+      "prevRank": null
+    },
+    {
+      "id": "RT268008",
+      "name": "陳野",
+      "events": [
+        0,
+        0,
+        0,
+        20,
+        0,
+        0
+      ],
+      "total": 20,
+      "rank": 57,
+      "change": null,
+      "prevRank": null
+    },
+    {
+      "id": "RT267217",
+      "name": "577",
+      "events": [
+        0,
+        0,
+        10,
+        0,
+        0,
+        0
+      ],
+      "total": 10,
+      "rank": 58,
+      "change": -18,
+      "prevRank": 40
+    },
+    {
+      "id": "RT267218",
+      "name": "IvanZ",
+      "events": [
+        0,
+        0,
+        10,
+        0,
+        0,
+        0
+      ],
+      "total": 10,
+      "rank": 59,
+      "change": -18,
+      "prevRank": 41
+    }
+  ]
+}

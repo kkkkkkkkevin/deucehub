@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/assets/site.css">
+    <link rel="icon" type="image/jpeg" href="/logo.jpg">
+    <link rel="stylesheet" href="/cursor.css">
+    <title>网球名片 | 界外网球</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(180deg, #f5f0ff 0%, #e8f5e9 50%, #fffde7 100%);
+            min-height: 100vh; overflow-x: hidden; color: #2d2d2d;
+        }
+        .stars-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+        .star { position: absolute; background: #5B4B8A; border-radius: 50%; animation: twinkle 4s infinite; }
+        @keyframes twinkle { 0%,100% { opacity: 0.15; } 50% { opacity: 0.5; } }
+
+        .navbar { background: rgba(255,255,255,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(91,75,138,0.1); padding: 0 40px; position: sticky; top: 0; z-index: 100; }
+        .navbar-content { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 72px; }
+        .logo-container { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .logo { width: 44px; height: 44px; border-radius: 10px; border: 2px solid #FFD700; object-fit: cover; box-shadow: 0 0 15px rgba(255,215,0,0.3); }
+        .brand-text { display: flex; flex-direction: column; }
+        .brand-name { color: #5B4B8A; font-size: 20px; font-weight: 700; letter-spacing: 2px; line-height: 1.2; }
+        .brand-en { color: #9e8ec7; font-size: 11px; letter-spacing: 3px; font-weight: 500; text-transform: uppercase; }
+        .nav-links { display: flex; align-items: center; gap: 8px; }
+        .nav-links a { color: #5B4B8A; text-decoration: none; font-size: 15px; font-weight: 500; padding: 8px 16px; border-radius: 6px; transition: all 0.2s ease; }
+        .nav-links a:hover { color: #4CAF50; background: #f0f7f0; }
+        .nav-links a.active { color: #4CAF50; font-weight: 600; }
+        .nav-dropdown { position: relative; }
+        .nav-dropdown > a::after { content: ' ▾'; font-size: 10px; }
+        .nav-dropdown-menu { display: none; position: absolute; top: 100%; left: 0; background: #fff; border-radius: 10px; box-shadow: 0 8px 24px rgba(91,75,138,0.15); min-width: 200px; padding: 8px 0; z-index: 200; }
+        .nav-dropdown:hover .nav-dropdown-menu { display: block; }
+        .nav-dropdown-menu a { display: block; padding: 10px 20px; font-size: 14px; color: #5B4B8A; text-decoration: none; transition: all 0.2s; }
+        .nav-dropdown-menu a:hover { background: #f5f0ff; color: #4CAF50; }
+        .nav-dropdown:hover > a { color: #4CAF50; background: #f0f7f0; }
+
+        .card-page { max-width: 680px; margin: 0 auto; padding: 40px 20px 80px; position: relative; z-index: 1; }
+        .back-link { display: inline-flex; align-items: center; gap: 6px; color: #5B4B8A; text-decoration: none; font-size: 14px; font-weight: 600; margin-bottom: 20px; transition: color 0.2s; }
+        .back-link:hover { color: #4CAF50; }
+
+        .tennis-card { background: #fff; border-radius: 24px; overflow: hidden; box-shadow: 0 8px 40px rgba(91,75,138,0.15); border: 3px solid transparent; background-clip: padding-box; position: relative; }
+        .tennis-card::before { content: ''; position: absolute; inset: -3px; border-radius: 24px; background: linear-gradient(135deg, #FFD700, #5B4B8A, #4CAF50, #FFD700); z-index: -1; }
+
+        .card-banner { height: 280px; position: relative; overflow: hidden; background: #1a3c1a; }
+        .card-banner img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; }
+        .card-banner::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.4) 100%); }
+        .card-banner-default { height: 280px; position: relative; overflow: hidden; background: linear-gradient(135deg, #1a3c1a 0%, #2d5a2d 50%, #1a3c1a 100%); }
+        .card-banner-default::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 60%, rgba(255,215,0,0.15) 0%, transparent 50%), radial-gradient(ellipse at 70% 40%, rgba(91,75,138,0.2) 0%, transparent 50%); }
+        .banner-text { position: absolute; bottom: 16px; right: 24px; z-index: 2; text-align: right; }
+        .banner-text .star-name { color: rgba(255,255,255,0.7); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; text-shadow: 0 1px 4px rgba(0,0,0,0.5); }
+
+        .avatar-section { position: relative; margin-top: -60px; text-align: center; z-index: 3; padding: 0 24px; }
+        .avatar-wrap { display: inline-block; position: relative; }
+        .avatar { width: 120px; height: 120px; border-radius: 50%; border: 5px solid #FFD700; object-fit: cover; box-shadow: 0 4px 20px rgba(91,75,138,0.3); }
+        .avatar-placeholder { width: 120px; height: 120px; border-radius: 50%; border: 5px solid #FFD700; box-shadow: 0 4px 20px rgba(91,75,138,0.3); background: linear-gradient(135deg, #5B4B8A, #7B6BAE); display: flex; align-items: center; justify-content: center; font-size: 48px; color: #fff; font-weight: 700; }
+        .avatar-badges { position: absolute; bottom: -8px; right: -8px; display: flex; flex-direction: column; gap: 4px; }
+        .mini-badge { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.15); cursor: pointer; transition: transform 0.2s; }
+        .mini-badge:hover { transform: scale(1.15); }
+
+        .player-info { text-align: center; padding: 16px 24px 0; }
+        .player-name { font-size: 28px; font-weight: 800; color: #2d2d2d; }
+        .player-id { font-size: 13px; color: #9e8ec7; font-family: 'SF Mono', 'Monaco', monospace; margin-top: 4px; letter-spacing: 1px; }
+        .ntrp-row { display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+        .ntrp-badge { background: linear-gradient(135deg, #5B4B8A, #7B6BAE); color: #fff; padding: 6px 16px; border-radius: 20px; font-size: 14px; font-weight: 700; }
+        .ntrp-badge .label { font-size: 11px; opacity: 0.8; font-weight: 500; }
+        .ntrp-badge .value { font-size: 16px; }
+
+        .personality-tags { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; padding: 16px 24px; }
+        .tag { padding: 6px 14px; border-radius: 16px; font-size: 13px; font-weight: 600; }
+        .tag-power { background: #fff3e0; color: #e67e22; border: 1px solid #ffcc80; }
+        .tag-speed { background: #e8f5e9; color: #2d8a4e; border: 1px solid #a5d6a7; }
+        .tag-brain { background: #eaf2f8; color: #2471a3; border: 1px solid #90caf9; }
+        .tag-heart { background: #fdecea; color: #c0392b; border: 1px solid #ef9a9a; }
+        .tag-allround { background: #f4ecf7; color: #7d3c98; border: 1px solid #c0a0d0; }
+        .tag-locked { background: #f5f5f5; color: #bbb; border: 1px solid #e0e0e0; }
+
+        .social-row { display: flex; justify-content: center; gap: 16px; padding: 8px 24px 16px; flex-wrap: wrap; }
+        .social-link { display: flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 12px; text-decoration: none; font-size: 14px; font-weight: 600; transition: all 0.2s; }
+        .social-douyin { background: #1a1a1a; color: #fff; }
+        .social-douyin:hover { background: #333; transform: translateY(-2px); }
+        .social-redbook { background: #ff2442; color: #fff; }
+        .social-redbook:hover { background: #e01e3c; transform: translateY(-2px); }
+        .social-locked { background: #f5f5f5; color: #999; cursor: default; }
+        .social-locked:hover { transform: none; }
+        .social-link svg { width: 18px; height: 18px; }
+
+        .bio { text-align: center; padding: 8px 32px 20px; font-style: italic; color: #666; font-size: 15px; line-height: 1.6; position: relative; }
+        .bio::before { content: '\201C'; font-size: 32px; color: #e0d6f0; position: absolute; left: 20px; top: -4px; }
+        .bio::after { content: '\201D'; font-size: 32px; color: #e0d6f0; position: absolute; right: 20px; bottom: -8px; }
+
+        .card-divider { height: 1px; background: linear-gradient(90deg, transparent, #f0e6ff, transparent); margin: 0 24px; }
+
+        .history-section { padding: 20px 24px; }
+        .section-label { font-size: 14px; font-weight: 700; color: #5B4B8A; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        .history-list { display: flex; flex-direction: column; gap: 8px; }
+        .history-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: #faf8ff; border-radius: 10px; border-left: 3px solid #5B4B8A; transition: all 0.2s; }
+        .history-item:hover { background: #f5f0ff; transform: translateX(4px); }
+        .history-item .h-tournament { font-weight: 600; font-size: 14px; color: #2d2d2d; }
+        .history-item .h-date { font-size: 12px; color: #999; }
+        .history-item .h-right { display: flex; align-items: center; gap: 12px; }
+        .history-item .h-rank { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+        .h-rank.gold { background: linear-gradient(135deg, #FFD700, #FFA000); color: #fff; }
+        .h-rank.silver { background: linear-gradient(135deg, #C0C0C0, #9e9e9e); color: #fff; }
+        .h-rank.bronze { background: linear-gradient(135deg, #CD7F32, #A0522D); color: #fff; }
+        .h-rank.normal { background: #f0e6ff; color: #5B4B8A; }
+        .history-item .h-points { font-weight: 700; color: #4CAF50; font-size: 15px; }
+        .history-empty { text-align: center; padding: 20px; color: #999; font-size: 14px; }
+
+        .badges-section { padding: 20px 24px; }
+        .badges-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px; }
+        .badge-card { text-align: center; padding: 14px 8px; background: #faf8ff; border-radius: 12px; border: 1px solid #f0e6ff; transition: all 0.2s; cursor: pointer; }
+        .badge-card:hover { transform: translateY(-4px); box-shadow: 0 4px 16px rgba(91,75,138,0.1); }
+        .badge-card.locked { opacity: 0.4; }
+        .badge-icon { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 8px; }
+        .badge-name { font-size: 12px; font-weight: 700; color: #2d2d2d; }
+        .badge-desc { font-size: 10px; color: #999; margin-top: 2px; }
+
+        .footer { background: rgba(91,75,138,0.05); border-top: 1px solid rgba(91,75,138,0.1); padding: 40px; text-align: center; position: relative; z-index: 1; }
+        .footer-content { max-width: 1200px; margin: 0 auto; }
+        .footer-logo { width: 48px; height: 48px; border-radius: 10px; border: 2px solid #FFD700; margin-bottom: 16px; box-shadow: 0 0 15px rgba(255,215,0,0.3); }
+        .footer-text { color: #888; font-size: 14px; margin-bottom: 8px; letter-spacing: 1px; }
+        .footer-qr { display: flex; justify-content: center; gap: 40px; margin: 0 0 20px; flex-wrap: wrap; }
+        .qr-item { text-align: center; }
+        .qr-item img { width: 90px; height: 90px; border-radius: 8px; border: 1px solid #e0d6f0; }
+        .qr-item .qr-label { font-size: 12px; color: #5B4B8A; font-weight: 600; margin-top: 6px; }
+        .qr-item .qr-name { font-size: 11px; color: #999; margin-top: 1px; }
+        .footer-copyright { color: #aaa; font-size: 12px; }
+        .footer-icp { margin-top: 12px; }
+        .footer-icp a { color: #aaa; font-size: 12px; text-decoration: none; }
+        .footer-icp a:hover { color: #5B4B8A; }
+
+        .loading { text-align: center; padding: 80px 20px; color: #9e8ec7; }
+        .loading .spinner { display: inline-block; width: 32px; height: 32px; border: 3px solid #e0d6f0; border-top-color: #5B4B8A; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 12px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 768px) {
+            .navbar { padding: 0 16px; } .navbar-content { height: 60px; } .logo { width: 36px; height: 36px; }
+            .brand-name { font-size: 16px; } .nav-links { display: none; }
+            .card-page { padding: 20px 12px 60px; } .card-banner, .card-banner-default { height: 180px; }
+            .avatar, .avatar-placeholder { width: 90px; height: 90px; font-size: 36px; }
+            .player-name { font-size: 22px; } .badges-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body class="fixed-pad">
+    <div class="stars-bg" id="stars-bg"></div>
+
+    <header class="site-header" id="siteHeader">
+    <a href="/" class="logo-wrap">
+        <img src="/logo.jpg" alt="界外网球" class="logo">
+        <div class="brand-text"><span class="brand-name">界外网球</span><span class="brand-en">Rebel Tennis</span></div>
+    </a>
+    <nav class="nav">
+        <a href="/" class="">首页</a>
+        <a href="/ranking.html" class="">排名</a>
+        <a href="/matches.html" class="">比赛</a>
+        <div class="dropdown" id="navActivities">
+            <a href="#">活动 <span class="arrow">▾</span></a>
+            <div class="dropdown-menu">
+                <a href="/werewolf.html">🎭 网球狼人杀</a>
+                <a href="/sanguo.html">⚔️ 网球三国杀</a>
+            </div>
+        </div>
+    </nav>
+    <div class="burger" id="burger"><span></span><span></span><span></span></div>
+</header>
+<div class="mobile-menu" id="mobileMenu">
+    <a href="/">首页</a>
+    <a href="/ranking.html">排名</a>
+    <a href="/matches.html">比赛</a>
+    <a href="/werewolf.html">🎭 网球狼人杀</a>
+    <a href="/sanguo.html">⚔️ 网球三国杀</a>
+</div>
+
+    <div class="card-page">
+        <a href="/#ranking" class="back-link">← 返回排行榜</a>
+        <div id="card-content"><div class="loading"><div class="spinner"></div><br>加载中...</div></div>
+    </div>
+
+    
+
+    <script>
+        // 星星背景
+        function createStars() {
+            const c = document.getElementById('stars-bg');
+            for (let i = 0; i < 60; i++) {
+                const s = document.createElement('div');
+                s.className = 'star';
+                const sz = Math.random() * 3 + 1;
+                s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*4}s`;
+                c.appendChild(s);
+            }
+        }
+        createStars();
+
+        // 选手自定义数据（有头像/社交/签名等的选手）
+        const customData = {
+            '呱呱': {
+                avatar: '/avatars/呱呱.jpg',
+                background: '/backgrounds/djokovic.jpg',
+                starName: 'Novak Djokovic',
+                ntrp: '2.135',
+                tags: [
+                    { text: '跑不死的兔子', icon: '🏃', cls: 'tag-speed' },
+                    { text: '战术大师', icon: '🧠', cls: 'tag-brain' },
+                    { text: '逆转之王', icon: '🔥', cls: 'tag-heart' }
+                ],
+                social: { douyin: 'zozonomusle', xiaohongshu: 'zozonomusle' },
+                bio: '每一球都拼尽全力，每一场比赛都值得记住。<br>网球不只是运动，更是一种生活态度。'
+            }
+        };
+
+        // 赛事数据从 /api/rankings 动态获取（data.tournaments: [{id,name,date}]）
+
+        // 从URL获取选手名
+        const params = new URLSearchParams(location.search);
+        const playerName = params.get('name') || '呱呱';
+
+        async function loadCard() {
+            try {
+                const res = await fetch('/api/rankings');
+                const data = await res.json();
+                const player = (data.players || []).find(p => p.name === playerName);
+
+                if (!player) {
+                    document.getElementById('card-content').innerHTML = '<div class="loading">未找到选手「' + playerName + '」</div>';
+                    return;
+                }
+
+                renderCard(player, data.tournaments || []);
+            } catch (e) {
+                document.getElementById('card-content').innerHTML = '<div class="loading">数据加载失败，请刷新重试</div>';
+            }
+        }
+
+        function renderCard(p, tournaments) {
+            const custom = customData[p.name] || {};
+            const events = p.events || [];
+            const totalTournaments = events.filter(e => e > 0).length;
+
+            // 头像
+            const avatarHTML = custom.avatar
+                ? `<img class="avatar" src="${custom.avatar}" alt="${p.name}">`
+                : `<div class="avatar-placeholder">${p.name.charAt(0)}</div>`;
+
+            // 背景
+            const bannerHTML = custom.background
+                ? `<div class="card-banner"><img src="${custom.background}" alt="${custom.starName||''}"><div class="banner-text"><div class="star-name">★ ${custom.starName||'Tennis Star'}</div></div></div>`
+                : `<div class="card-banner-default"><div class="banner-text"><div class="star-name">★ Tennis Court</div></div></div>`;
+
+            // NTRP
+            const ntrp = custom.ntrp || '待评测';
+
+            // 标签
+            const tagsHTML = (custom.tags && custom.tags.length)
+                ? custom.tags.map(t => `<span class="tag ${t.cls}">${t.icon} ${t.text}</span>`).join('')
+                : '<span class="tag tag-locked">🔒 人格标签待解锁</span>';
+
+            // 社交
+            let socialHTML = '';
+            if (custom.social) {
+                if (custom.social.douyin) socialHTML += `<a href="#" class="social-link social-douyin" onclick="return false;"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.04-.1z"/></svg>抖音 ${custom.social.douyin}</a>`;
+                if (custom.social.xiaohongshu) socialHTML += `<a href="#" class="social-link social-redbook" onclick="return false;"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 13.87c-1.42.93-3.18.79-4.55.06-1.37-.73-2.31-2.05-2.31-3.59 0-1.55.94-2.86 2.31-3.59 1.37-.73 3.13-.87 4.55.06.85.56 1.5 1.36 1.85 2.28h-2.1c-.42-.69-1.15-1.14-1.95-1.14-1.28 0-2.32 1.04-2.32 2.32s1.04 2.32 2.32 2.32c.8 0 1.53-.45 1.95-1.14h2.1c-.35.92-1 1.72-1.85 2.28z"/></svg>小红书 ${custom.social.xiaohongshu}</a>`;
+            } else {
+                socialHTML = '<span class="social-link social-locked">🔒 社交账号待绑定</span>';
+            }
+
+            // 签名
+            const bio = custom.bio || '这位选手还没有设置个性签名';
+
+            // 参赛记录
+            let historyHTML = '';
+            events.forEach((score, i) => {
+                if (score > 0) {
+                    // 计算该站排名
+                    historyHTML += `<div class="history-item">
+                        <div><div class="h-tournament">${(tournaments[i]&&tournaments[i].name)||('赛事'+(i+1))}</div><div class="h-date">${(tournaments[i]&&tournaments[i].date)||''}</div></div>
+                        <div class="h-right"><div class="h-rank normal">—</div><div class="h-points">${score}pts</div></div>
+                    </div>`;
+                }
+            });
+            if (!historyHTML) historyHTML = '<div class="history-empty">暂无参赛记录</div>';
+
+            // 徽章
+            const badges = [
+                { icon: '🌟', name: '首战元勋', desc: '参加首站赛事', unlocked: totalTournaments >= 1, color: 'linear-gradient(135deg, #4CAF50, #2d8a4e)' },
+                { icon: '🎾', name: '得客会先锋', desc: '参加得客会250赛', unlocked: events[2] > 0, color: 'linear-gradient(135deg, #FFD700, #FFA000)' },
+                { icon: '📊', name: '积分突破', desc: '总积分超50', unlocked: p.total >= 50, color: 'linear-gradient(135deg, #2471a3, #1a5276)' },
+                { icon: '🔥', name: '多站连击', desc: '参加2站以上', unlocked: totalTournaments >= 2, color: 'linear-gradient(135deg, #e67e22, #d35400)' },
+                { icon: '💪', name: '社交达人', desc: '已绑定社交账号', unlocked: !!custom.social, color: 'linear-gradient(135deg, #7d3c98, #6c3483)' },
+                { icon: '🏆', name: '领奖台', desc: '进入前三名', unlocked: p.rank <= 3, color: 'linear-gradient(135deg, #FFD700, #FFA000)' }
+            ];
+            const badgesHTML = badges.map(b => `
+                <div class="badge-card${b.unlocked ? '' : ' locked'}">
+                    <div class="badge-icon" style="background:${b.unlocked ? b.color : '#e0e0e0'}">${b.unlocked ? b.icon : '🔒'}</div>
+                    <div class="badge-name">${b.name}</div>
+                    <div class="badge-desc">${b.desc}</div>
+                </div>`).join('');
+
+            // 迷你徽章（头像旁）
+            let miniBadgesHTML = '';
+            badges.filter(b => b.unlocked).slice(0, 3).forEach(b => {
+                miniBadgesHTML += `<div class="mini-badge" style="background:${b.color}" title="${b.name}">${b.icon}</div>`;
+            });
+
+            // 排名样式
+            let rankCls = 'normal';
+            if (p.rank === 1) rankCls = 'gold';
+            else if (p.rank === 2) rankCls = 'silver';
+            else if (p.rank === 3) rankCls = 'bronze';
+
+            document.getElementById('card-content').innerHTML = `
+                <div class="tennis-card">
+                    ${bannerHTML}
+                    <div class="avatar-section">
+                        <div class="avatar-wrap">
+                            ${avatarHTML}
+                            <div class="avatar-badges">${miniBadgesHTML}</div>
+                        </div>
+                    </div>
+                    <div class="player-info">
+                        <div class="player-name">${p.name}</div>
+                        <div class="player-id">${p.id || 'RT—'}</div>
+                        <div class="ntrp-row">
+                            <div class="ntrp-badge"><span class="label">NTRP</span> <span class="value">${ntrp}</span></div>
+                            <div class="ntrp-badge" style="background:linear-gradient(135deg,#4CAF50,#2d8a4e)"><span class="label">总积分</span> <span class="value">${p.total}</span></div>
+                            <div class="ntrp-badge" style="background:linear-gradient(135deg,#e67e22,#d35400)"><span class="label">排名</span> <span class="value">#${p.rank}</span></div>
+                        </div>
+                    </div>
+                    <div class="personality-tags">${tagsHTML}</div>
+                    <div class="social-row">${socialHTML}</div>
+                    <div class="bio">${bio}</div>
+                    <div class="card-divider"></div>
+                    <div class="history-section">
+                        <div class="section-label">🏆 参赛记录</div>
+                        <div class="history-list">${historyHTML}</div>
+                    </div>
+                    <div class="card-divider"></div>
+                    <div class="badges-section">
+                        <div class="section-label">🎖️ 成就徽章</div>
+                        <div class="badges-grid">${badgesHTML}</div>
+                    </div>
+                </div>`;
+            document.title = `${p.name} · 网球名片 | 界外网球`;
+        }
+
+        loadCard();
+    </script>
+<div id="siteFooterMount"></div>
+    <script src="/assets/site.js"></script>
+    <script type="module" src="/assets/tennis-game.js"></script>
+</body>
+</html>

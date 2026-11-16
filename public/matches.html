@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/assets/site.css">
+    <link rel="icon" type="image/jpeg" href="/logo.jpg">
+    <link rel="apple-touch-icon" href="/logo.jpg">
+    <link rel="stylesheet" href="/cursor.css">
+    <title>比赛信息 · 界外网球</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif; background: linear-gradient(180deg, #f5f0ff 0%, #e8f5e9 50%, #fffde7 100%); min-height: 100vh; overflow-x: hidden; color: #2d2d2d; }
+        .stars-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+        .star { position: absolute; background: #5B4B8A; border-radius: 50%; animation: twinkle 4s infinite; }
+        @keyframes twinkle { 0%,100% { opacity: 0.15; } 50% { opacity: 0.5; } }
+
+        .navbar { background: rgba(255,255,255,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(91,75,138,0.1); padding: 0 40px; position: sticky; top: 0; z-index: 100; }
+        .navbar-content { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 72px; }
+        .logo-container { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .logo { width: 44px; height: 44px; border-radius: 10px; border: 2px solid #FFD700; object-fit: cover; box-shadow: 0 0 15px rgba(255,215,0,0.3); }
+        .brand-text { display: flex; flex-direction: column; }
+        .brand-name { color: #5B4B8A; font-size: 20px; font-weight: 700; letter-spacing: 2px; line-height: 1.2; }
+        .brand-en { color: #9e8ec7; font-size: 11px; letter-spacing: 3px; font-weight: 500; text-transform: uppercase; }
+        .nav-links { display: flex; align-items: center; gap: 8px; }
+        .nav-links a { color: #5B4B8A; text-decoration: none; font-size: 15px; font-weight: 500; padding: 8px 16px; border-radius: 6px; transition: all 0.2s ease; }
+        .nav-links a:hover { color: #4CAF50; background: #f0f7f0; }
+        .nav-links a.active { color: #4CAF50; font-weight: 600; }
+        .nav-dropdown { position: relative; }
+        .nav-dropdown > a::after { content: ' ▾'; font-size: 10px; }
+        .nav-dropdown-menu { display: none; position: absolute; top: 100%; left: 0; background: #fff; border-radius: 10px; box-shadow: 0 8px 24px rgba(91,75,138,0.15); min-width: 200px; padding: 8px 0; z-index: 200; }
+        .nav-dropdown:hover .nav-dropdown-menu { display: block; }
+        .nav-dropdown-menu a { display: block; padding: 10px 20px; font-size: 14px; color: #5B4B8A; text-decoration: none; transition: all 0.2s; }
+        .nav-dropdown-menu a:hover { background: #f5f0ff; color: #4CAF50; }
+        .nav-dropdown:hover > a { color: #4CAF50; background: #f0f7f0; }
+
+        .matches-page { max-width: 1200px; margin: 0 auto; padding: 60px 40px 80px; position: relative; z-index: 1; }
+        .matches-title { text-align: center; margin-bottom: 40px; }
+        .matches-title h1 { font-size: 36px; font-weight: 700; color: #2d2d2d; letter-spacing: 2px; }
+        .matches-title h1::after { content: ''; display: block; width: 60px; height: 4px; background: linear-gradient(90deg, #5B4B8A 0%, #4CAF50 100%); margin: 16px auto 0; border-radius: 2px; }
+        .matches-title p { color: #888; font-size: 16px; margin-top: 16px; }
+
+        .matches-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+        .match-card { background: #fff; border-radius: 16px; padding: 28px; border: 2px solid #f0e6ff; transition: all 0.3s ease; position: relative; overflow: hidden; }
+        .match-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(91,75,138,0.12); }
+        .match-card.completed { border-color: #e0e0e0; opacity: 0.75; }
+        .match-card.open { border-color: #4CAF50; box-shadow: 0 4px 16px rgba(76,175,80,0.15); }
+        .match-card.upcoming { border-color: #FFD700; box-shadow: 0 4px 16px rgba(255,215,0,0.15); }
+        .match-status { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 700; margin-bottom: 14px; }
+        .match-status.completed { background: #f5f5f5; color: #999; }
+        .match-status.open { background: #e8f5e9; color: #2d8a4e; }
+        .match-status.upcoming { background: #fffde7; color: #b8860b; }
+        .match-date { font-size: 24px; font-weight: 800; color: #2d2d2d; margin-bottom: 6px; }
+        .match-card.completed .match-date { color: #999; }
+        .match-location { font-size: 15px; color: #5B4B8A; font-weight: 600; margin-bottom: 4px; }
+        .match-format { font-size: 14px; color: #888; }
+        .match-card.open::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #4CAF50, #66BB6A); }
+        .match-card.upcoming::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #FFD700, #FFA000); }
+
+        .footer { background: rgba(91,75,138,0.05); border-top: 1px solid rgba(91,75,138,0.1); padding: 40px; text-align: center; position: relative; z-index: 1; }
+        .footer-content { max-width: 1200px; margin: 0 auto; }
+        .footer-qr { display: flex; justify-content: center; gap: 40px; margin: 0 0 20px; flex-wrap: wrap; }
+        .qr-item { text-align: center; }
+        .qr-item img { width: 100px; height: 100px; border-radius: 8px; border: 1px solid #e0d6f0; }
+        .qr-item .qr-label { font-size: 13px; color: #5B4B8A; font-weight: 600; margin-top: 8px; }
+        .qr-item .qr-name { font-size: 12px; color: #999; margin-top: 2px; }
+        .footer-logo { width: 48px; height: 48px; border-radius: 10px; border: 2px solid #FFD700; margin-bottom: 16px; box-shadow: 0 0 15px rgba(255,215,0,0.3); }
+        .footer-text { color: #888; font-size: 14px; margin-bottom: 8px; letter-spacing: 1px; }
+        .footer-copyright { color: #aaa; font-size: 12px; }
+        .footer-icp { margin-top: 12px; }
+        .footer-icp a { color: #aaa; font-size: 12px; text-decoration: none; }
+        .footer-icp a:hover { color: #5B4B8A; }
+
+        @media (max-width: 768px) {
+            .navbar { padding: 0 16px; } .navbar-content { height: 60px; } .logo { width: 36px; height: 36px; }
+            .brand-name { font-size: 16px; } .nav-links { display: none; }
+            .matches-page { padding: 40px 16px 60px; }
+            .matches-grid { grid-template-columns: 1fr; }
+            .footer-qr { gap: 20px; } .qr-item img { width: 80px; height: 80px; }
+        }
+    </style>
+</head>
+<body class="fixed-pad">
+    <div class="stars-bg" id="stars-bg"></div>
+
+    <header class="site-header" id="siteHeader">
+    <a href="/" class="logo-wrap">
+        <img src="/logo.jpg" alt="界外网球" class="logo">
+        <div class="brand-text"><span class="brand-name">界外网球</span><span class="brand-en">Rebel Tennis</span></div>
+    </a>
+    <nav class="nav">
+        <a href="/" class="">首页</a>
+        <a href="/ranking.html" class="">排名</a>
+        <a href="/matches.html" class="active">比赛</a>
+        <div class="dropdown" id="navActivities">
+            <a href="#">活动 <span class="arrow">▾</span></a>
+            <div class="dropdown-menu">
+                <a href="/werewolf.html">🎭 网球狼人杀</a>
+                <a href="/sanguo.html">⚔️ 网球三国杀</a>
+            </div>
+        </div>
+    </nav>
+    <div class="burger" id="burger"><span></span><span></span><span></span></div>
+</header>
+<div class="mobile-menu" id="mobileMenu">
+    <a href="/">首页</a>
+    <a href="/ranking.html">排名</a>
+    <a href="/matches.html">比赛</a>
+    <a href="/werewolf.html">🎭 网球狼人杀</a>
+    <a href="/sanguo.html">⚔️ 网球三国杀</a>
+</div>
+
+    <div class="matches-page">
+        <div class="matches-title">
+            <h1>比赛信息</h1>
+            <p>记录每一次挥拍，见证每一刻荣耀</p>
+        </div>
+        <div class="matches-grid">
+            <div class="match-card completed">
+                <span class="match-status completed">已完赛</span>
+                <div class="match-date">7.18</div>
+                <div class="match-location">闵行 · 得客会</div>
+                <div class="match-format">单打 · 18签</div>
+            </div>
+            <div class="match-card open">
+                <span class="match-status open">报名中</span>
+                <div class="match-date">7.25</div>
+                <div class="match-location">闵行 · 得客会</div>
+                <div class="match-format">单打 · 16签</div>
+            </div>
+            <div class="match-card upcoming">
+                <span class="match-status upcoming">比赛预告</span>
+                <div class="match-date">7.26</div>
+                <div class="match-location">川沙 · 久逸</div>
+                <div class="match-format">单打 · 8签</div>
+            </div>
+            <div class="match-card upcoming">
+                <span class="match-status upcoming">比赛预告</span>
+                <div class="match-date">8.1</div>
+                <div class="match-location">伟劲</div>
+                <div class="match-format">单打 · 16签</div>
+            </div>
+        </div>
+    </div>
+
+    
+
+    <script>
+        function createStars() {
+            const c = document.getElementById('stars-bg');
+            for (let i = 0; i < 60; i++) {
+                const s = document.createElement('div'); s.className = 'star';
+                const sz = Math.random() * 3 + 1;
+                s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*4}s`;
+                c.appendChild(s);
+            }
+        }
+        createStars();
+    </script>
+<div id="siteFooterMount"></div>
+    <script src="/assets/site.js"></script>
+    <script type="module" src="/assets/tennis-game.js"></script>
+</body>
+</html>

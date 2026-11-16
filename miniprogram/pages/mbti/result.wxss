@@ -1,0 +1,246 @@
+/* pages/mbti/result.wxss */
+.result-page {
+  min-height: 100vh;
+  padding: 0 32rpx 40rpx;
+}
+
+/* 顶部大图 */
+.result-hero {
+  position: relative;
+  margin: 0 -32rpx 32rpx;
+  border-radius: 0 0 40rpx 40rpx;
+  overflow: hidden;
+  padding: 60rpx 32rpx 48rpx;
+  text-align: center;
+}
+
+.hero-deco {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(180deg, #2d5a27 0%, #1e3d1a 100%);
+}
+
+.hero-deco::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 8rpx;
+  background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #1dd1a1, #5f27cd, #ff9ff3);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+.species-big-img {
+  width: 320rpx;
+  height: 320rpx;
+  border-radius: 24rpx;
+  box-shadow: 0 8rpx 40rpx rgba(0,0,0,0.3);
+}
+
+.species-name {
+  font-size: 52rpx;
+  font-weight: 800;
+  color: #fff;
+  margin-top: 24rpx;
+  letter-spacing: 4rpx;
+}
+
+.species-code {
+  font-size: 28rpx;
+  color: #d4e157;
+  margin-top: 8rpx;
+  font-weight: 600;
+  letter-spacing: 8rpx;
+}
+
+/* 火力值 */
+.fire-power-card {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 16rpx rgba(0,0,0,0.06);
+}
+
+.fp-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8rpx;
+  margin-bottom: 20rpx;
+}
+
+.fp-title {
+  font-size: 28rpx;
+  color: #999;
+  font-weight: 600;
+}
+
+.fp-number {
+  font-size: 56rpx;
+  font-weight: 900;
+  color: #d4a843;
+  line-height: 1;
+}
+
+.fp-max {
+  font-size: 24rpx;
+  color: #ccc;
+}
+
+.fp-bar {
+  height: 20rpx;
+  background: #f0f0f0;
+  border-radius: 10rpx;
+  overflow: hidden;
+  position: relative;
+}
+
+.fp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #d4a843, #ff6b35);
+  border-radius: 10rpx;
+  transition: width 0.8s ease;
+}
+
+/* 描述卡片 */
+.desc-card {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 16rpx rgba(0,0,0,0.06);
+}
+
+.desc-text {
+  font-size: 30rpx;
+  color: #333;
+  line-height: 1.8;
+}
+
+.tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 24rpx;
+}
+
+.tag {
+  font-size: 24rpx;
+  padding: 8rpx 24rpx;
+  border-radius: 20rpx;
+  background: rgba(45, 90, 39, 0.08);
+  color: #2d5a27;
+  font-weight: 600;
+}
+
+/* 四维解析 */
+.dim-card {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 16rpx rgba(0,0,0,0.06);
+}
+
+.card-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #2d5a27;
+  margin-bottom: 28rpx;
+}
+
+.dim-item {
+  margin-bottom: 28rpx;
+}
+
+.dim-item:last-child {
+  margin-bottom: 0;
+}
+
+.dim-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.dim-name {
+  font-size: 26rpx;
+  color: #999;
+}
+
+.dim-winner {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #333;
+}
+
+.dim-bar-track {
+  display: flex;
+  height: 16rpx;
+  border-radius: 8rpx;
+  overflow: hidden;
+  background: #f0f0f0;
+}
+
+.dim-bar-left {
+  flex: 3;
+  background: #e0e0e0;
+  transition: all 0.5s;
+}
+
+.dim-bar-right {
+  flex: 3;
+  background: #e0e0e0;
+  transition: all 0.5s;
+}
+
+.dim-bar-left.win-left {
+  flex: 7;
+  background: linear-gradient(90deg, #2d5a27, #3a7a32);
+}
+
+.dim-bar-right.win-right {
+  flex: 7;
+  background: linear-gradient(90deg, #7d4ba0, #5b2c83);
+}
+
+.dim-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8rpx;
+}
+
+.dim-label {
+  font-size: 24rpx;
+  color: #ccc;
+}
+
+.label-active-green {
+  color: #2d5a27;
+  font-weight: 700;
+}
+
+.label-active-purple {
+  color: #5b2c83;
+  font-weight: 700;
+}
+
+/* 按钮 */
+.result-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+  padding: 16rpx 0;
+}
+
+.btn-retry {
+  width: 100%;
+}
+
+.btn-share {
+  width: 100%;
+}

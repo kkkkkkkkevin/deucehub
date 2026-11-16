@@ -1,0 +1,48 @@
+<!-- pages/mbti/index.wxml - MBTI封面页 -->
+<view class="mbti-cover">
+  <!-- 顶部装饰 -->
+  <view class="hero-section">
+    <view class="rainbow-bar"></view>
+    <image class="logo" src="/images/logo.jpg" mode="aspectFit"></image>
+    <view class="hero-title">网球MBTI</view>
+    <view class="hero-subtitle">发现你的网球物种</view>
+    <view class="hero-desc">12道题 · 3分钟 · 16种网球人格</view>
+  </view>
+
+  <!-- 四维度展示 -->
+  <view class="dimensions-section">
+    <view class="dim-card" wx:for="{{dimensions}}" wx:key="key">
+      <view class="dim-name">{{item.name}}</view>
+      <view class="dim-poles">
+        <text class="pole-left">{{item.leftLabel}}</text>
+        <view class="pole-vs">VS</view>
+        <text class="pole-right">{{item.rightLabel}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 开始按钮 -->
+  <view class="start-section">
+    <button class="btn-primary btn-start" bindtap="onStart">开始测试</button>
+    <view class="test-count" wx:if="{{hasResult}}">已测过，点击重新测试</view>
+  </view>
+
+  <!-- 16物种预览 -->
+  <view class="species-preview">
+    <view class="section-title">16种网球物种</view>
+    <view class="species-grid">
+      <view class="species-item" wx:for="{{speciesList}}" wx:key="id" bindtap="onPreviewSpecies" data-id="{{item.id}}">
+        <image class="species-img" src="{{item.img}}" mode="aspectFit" lazy-load></image>
+        <text class="species-name">{{item.name}}</text>
+        <view class="fire-power">
+          <text class="fire-label">火力</text>
+          <text class="fire-value">{{item.firePower}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="footer">
+    <text>界外网球 · Out Tennis Club</text>
+  </view>
+</view>

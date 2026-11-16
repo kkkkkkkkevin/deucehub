@@ -1,0 +1,44 @@
+{
+  "pages": [
+    "pages/mbti/index",
+    "pages/ranking/index",
+    "pages/profile/index",
+    "pages/mbti/quiz",
+    "pages/mbti/result"
+  ],
+  "window": {
+    "navigationBarTitleText": "界外网球",
+    "navigationBarBackgroundColor": "#2d5a27",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f5f3ed",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#2d5a27",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/mbti/index",
+        "text": "网球人格",
+        "iconPath": "images/icons/mbti.png",
+        "selectedIconPath": "images/icons/mbti-active.png"
+      },
+      {
+        "pagePath": "pages/ranking/index",
+        "text": "积分榜",
+        "iconPath": "images/icons/ranking.png",
+        "selectedIconPath": "images/icons/ranking-active.png"
+      },
+      {
+        "pagePath": "pages/profile/index",
+        "text": "我的",
+        "iconPath": "images/icons/profile.png",
+        "selectedIconPath": "images/icons/profile-active.png"
+      }
+    ]
+  },
+  "sitemapLocation": "sitemap.json",
+  "style": "v2"
+}

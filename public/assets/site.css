@@ -1,0 +1,179 @@
+/* =========================================================
+   界外网球 · 全站统一页眉/页脚样式
+   - 透明悬浮 Header（参考 diabrowser，滚动后磨砂）
+   - 彩虹装饰带
+   - 3D 海洋页脚场景容器
+   ========================================================= */
+
+/* ---------- 透明悬浮 Header（参考 diabrowser：悬浮 / 圆角 / 居中 / 对齐内容） ---------- */
+.site-header {
+    position: fixed;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(1180px, calc(100% - 32px));
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 22px;
+    background: transparent;
+    border: 1px solid rgba(91, 75, 138, 0.12);
+    border-radius: 20px;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    transition: background .35s ease, backdrop-filter .35s ease,
+                box-shadow .35s ease, border-color .35s ease, padding .35s ease;
+}
+.site-header.scrolled {
+    padding: 8px 22px;
+    background: rgba(247, 243, 255, 0.72);
+    backdrop-filter: blur(18px) saturate(1.2);
+    -webkit-backdrop-filter: blur(18px) saturate(1.2);
+    box-shadow: 0 6px 26px rgba(91, 75, 138, 0.18);
+    border-color: rgba(91, 75, 138, 0.12);
+}
+.site-header .logo-wrap {
+    display: flex; align-items: center; gap: 12px; text-decoration: none;
+}
+.site-header .logo {
+    width: 44px; height: 44px; border-radius: 11px;
+    border: 2px solid #FFD700; object-fit: cover;
+    box-shadow: 0 0 16px rgba(255, 215, 0, 0.35);
+    transition: transform .35s ease, box-shadow .35s ease;
+}
+.site-header.scrolled .logo { width: 38px; height: 38px; }
+.site-header .logo-wrap:hover .logo { transform: rotate(-6deg) scale(1.05); }
+.site-header .brand-text { display: flex; flex-direction: column; line-height: 1.15; }
+.site-header .brand-name { color: #3a2f5c; font-size: 19px; font-weight: 700; letter-spacing: 2px; }
+.site-header .brand-en { color: #9e8ec7; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; font-weight: 500; }
+
+.site-header .nav { display: flex; align-items: center; gap: 4px; }
+.site-header .nav a {
+    color: #3a2f5c; text-decoration: none; font-size: 15px; font-weight: 500;
+    padding: 8px 15px; border-radius: 9px; transition: all .2s ease; position: relative;
+}
+.site-header .nav a:hover { color: #2d8a4e; background: rgba(76, 175, 80, 0.08); }
+.site-header .nav a.active { color: #2d8a4e; font-weight: 600; }
+.site-header .nav a.cta {
+    background: linear-gradient(135deg, #5B4B8A 0%, #7B6BAE 100%);
+    color: #fff; margin-left: 8px; box-shadow: 0 4px 14px rgba(91, 75, 138, 0.25);
+}
+.site-header .nav a.cta:hover { color: #fff; transform: translateY(-1px); box-shadow: 0 8px 20px rgba(91, 75, 138, 0.35); }
+.site-header .nav .arrow { font-size: 9px; opacity: .7; margin-left: 2px; }
+
+.site-header .dropdown { position: relative; }
+.site-header .dropdown-menu {
+    display: none; position: absolute; top: calc(100% + 10px); left: 0;
+    background: #fff; border-radius: 14px; min-width: 200px; padding: 8px;
+    box-shadow: 0 14px 38px rgba(91, 75, 138, 0.18); border: 1px solid rgba(91, 75, 138, 0.08);
+}
+.site-header .dropdown.open .dropdown-menu { display: block; animation: dropIn .2s ease; }
+@keyframes dropIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+.site-header .dropdown-menu a { display: block; padding: 11px 16px; font-size: 14px; border-radius: 9px; color: #3a2f5c; text-decoration: none; }
+.site-header .dropdown-menu a:hover { background: #f5f0ff; color: #2d8a4e; }
+
+/* 移动端汉堡 */
+.site-header .burger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 8px; }
+.site-header .burger span { width: 24px; height: 2px; background: #3a2f5c; border-radius: 2px; transition: .3s; }
+.mobile-menu {
+    display: none; position: fixed; top: 72px; left: 50%; transform: translateX(-50%);
+    width: calc(100% - 24px); max-width: 1180px;
+    background: rgba(247, 243, 255, 0.96); backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px); padding: 12px 16px 20px; z-index: 999;
+    border-radius: 18px; box-shadow: 0 10px 30px rgba(91, 75, 138, 0.15); flex-direction: column; gap: 4px;
+}
+.mobile-menu.open { display: flex; }
+.mobile-menu a { color: #3a2f5c; text-decoration: none; padding: 14px 8px; font-size: 16px; border-radius: 10px; }
+.mobile-menu a:hover { background: #f5f0ff; color: #2d8a4e; }
+
+/* 固定头后，给主体内容留出空间（非 hero 页） */
+body.fixed-pad { padding-top: 78px; }
+
+/* ---------- 彩虹装饰带 ---------- */
+.rainbow-band {
+    position: relative; width: 100%; height: 130px; overflow: hidden;
+    background: linear-gradient(180deg, rgba(247,243,255,0) 0%, #f7f3ff 100%);
+}
+.rainbow-band .arc {
+    position: absolute; left: 50%; top: 0; transform: translateX(-50%);
+    width: 120vw; max-width: 1600px; height: 260px;
+    border-radius: 0 0 50% 50% / 0 0 100% 100%;
+    background: linear-gradient(180deg,
+        #ff5f6d 0%, #ff9a3d 16%, #ffe14d 32%, #6ddf6d 50%,
+        #4dc8ff 68%, #7c6bff 84%, #c44dff 100%);
+    filter: blur(2px); opacity: .85;
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 55%, transparent 100%);
+            mask-image: linear-gradient(180deg, #000 0%, #000 55%, transparent 100%);
+}
+.rainbow-band .arc::after {
+    content: ''; position: absolute; inset: 14px 14px 0 14px;
+    border-radius: 0 0 50% 50% / 0 0 100% 100%;
+    background: linear-gradient(180deg, #f7f3ff 0%, #f7f3ff 100%);
+}
+.rainbow-band .shine {
+    position: absolute; left: 50%; top: 6px; transform: translateX(-50%);
+    width: 60vw; max-width: 760px; height: 120px; border-radius: 0 0 50% 50% / 0 0 100% 100%;
+    background: radial-gradient(ellipse at 50% 0%, rgba(255,255,255,.9), rgba(255,255,255,0) 70%);
+    pointer-events: none;
+}
+
+/* ---------- 3D 网球游戏页脚 ---------- */
+.tennis-game-footer {
+    position: relative; width: 100%; height: 78vh; min-height: 460px;
+    overflow: hidden; background: linear-gradient(180deg, #aee3ff 0%, #7ec8f0 100%);
+}
+.tennis-game-footer .tg-canvas { position: absolute; inset: 0; }
+.tennis-game-footer canvas { display: block; width: 100% !important; height: 100% !important; }
+.tennis-game-footer .tg-play {
+    position: absolute; top: 16px; right: 16px; z-index: 5;
+    border: none; cursor: pointer; padding: 10px 18px; border-radius: 999px;
+    font-size: 14px; font-weight: 700; color: #3a2f5c;
+    background: rgba(255, 255, 255, .82); box-shadow: 0 4px 14px rgba(0, 0, 0, .15);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    transition: background .2s ease;
+}
+.tennis-game-footer .tg-play:hover { background: #fff; }
+.tennis-game-footer .tg-score {
+    position: absolute; top: 16px; left: 16px; z-index: 5;
+    font-size: 18px; font-weight: 800; color: #fff;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, .45);
+    background: rgba(20, 30, 50, .28); padding: 6px 14px; border-radius: 999px;
+}
+
+/* ---------- 兜底信息页脚（在 3D 场景之下/之上） ---------- */
+.site-foot {
+    background: rgba(91, 75, 138, 0.06); border-top: 1px solid rgba(91, 75, 138, 0.10);
+    padding: 30px 40px; text-align: center; position: relative; z-index: 1;
+}
+.site-foot .foot-qr { display: flex; justify-content: center; gap: 40px; margin: 0 0 16px; flex-wrap: wrap; }
+.site-foot .qr-item img { width: 92px; height: 92px; border-radius: 8px; border: 1px solid #e0d6f0; }
+.site-foot .qr-item .qr-label { font-size: 13px; color: #5B4B8A; font-weight: 600; margin-top: 6px; }
+.site-foot .qr-item .qr-name { font-size: 12px; color: #999; margin-top: 2px; }
+.site-foot .foot-text { color: #888; font-size: 14px; margin-bottom: 6px; letter-spacing: 1px; }
+.site-foot .foot-copy { color: #aaa; font-size: 12px; }
+.site-foot .foot-icp { margin-top: 10px; }
+.site-foot .foot-icp a { color: #aaa; font-size: 12px; text-decoration: none; }
+.site-foot .foot-icp a:hover { color: #5B4B8A; }
+
+/* 固定头后，需要给主体内容留出空间（非 hero 页） */
+body.has-fixed-header { padding-top: 0; }
+
+/* 中等宽度：收缩导航，避免链接换行/溢出 */
+@media (max-width: 1024px) {
+    .site-header { width: calc(100% - 24px); padding: 8px 14px; }
+    .site-header .nav { gap: 0; }
+    .site-header .nav a { font-size: 13px; padding: 7px 10px; }
+    .site-header .nav a.cta { margin-left: 4px; padding: 7px 12px; font-size: 13px; }
+    .site-header .brand-name { font-size: 16px; }
+    .site-header .brand-en { display: none; }
+}
+
+@media (max-width: 768px) {
+    .site-header { top: 10px; width: calc(100% - 20px); padding: 8px 14px; border-radius: 16px; }
+    .site-header .nav { display: none; }
+    .site-header .burger { display: flex; }
+    .mobile-menu { top: 64px; }
+    .tennis-game-footer { height: 60vh; min-height: 380px; }
+    .rainbow-band { height: 96px; }
+}

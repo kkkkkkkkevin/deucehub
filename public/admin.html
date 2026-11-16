@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>界外网球 · 积分管理后台</title>
+<link rel="preconnect" href="https://unpkg.com">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/dayjs@1.11.13/dayjs.min.js"></script>
+<script src="https://unpkg.com/antd@5.21.0/dist/antd.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.25.6/babel.min.js"></script>
+<style>
+  html,body{margin:0;padding:0;background:#f5f5f5;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;}
+  #root{min-height:100vh;}
+  .app-wrap{max-width:1180px;margin:0 auto;padding:18px 18px 60px;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .topbar h1{font-size:20px;margin:0;color:#1f1f1f;}
+  .topbar .sub{color:#888;font-size:13px;margin-top:2px;}
+  .row-dup>td{background:#fff1f0 !important;}
+  .row-dup>td:first-child{box-shadow:inset 3px 0 0 #ff4d4f;}
+  .tour-head{display:flex;align-items:center;justify-content:center;gap:4px;user-select:none;}
+  .tour-head .th-name{cursor:move;}
+  .tour-head .th-del{cursor:pointer;color:#bbb;border:none;background:none;padding:0 2px;line-height:1;font-size:12px;}
+  .tour-head .th-del:hover{color:#ff4d4f;}
+  .login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;}
+  .hint{color:#999;font-size:12px;margin-top:6px;}
+  .import-alert{margin-bottom:12px;}
+  .conflict-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f0f0f0;}
+  .conflict-row .desc{flex:1;font-size:13px;}
+  .conflict-row .desc b{color:#cf1322;}
+  .conflict-row .act{width:200px;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" data-presets="react">
+const {
+  Table, Button, Input, InputNumber, Tabs, Modal, Popconfirm, List, Progress,
+  Card, Space, Typography, Tag, Alert, Tooltip, ConfigProvider, App
+} = antd;
+const { Title, Text } = Typography;
+
+const normId = id => String(id == null ? '' : id).trim().toLowerCase();
+const normName = n => String(n == null ? '' : n).trim().toLowerCase();
+const sumEvents = arr => (arr || []).reduce((a, b) => a + (parseInt(b) || 0), 0);
+const splitCells = line => line.split(/[\t,，]/).map(c => c.trim());
+
+/* ---- 解析网格文本：表头必需，支持 排名/ID/选手/各赛事/总积分 ---- */
+function parseGrid(txt, curTours) {
+  if (!txt || !txt.trim()) return null;
+  const lines = txt.trim().split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  if (lines.length < 2) return null;
+  const header = splitCells(lines[0]);
+  const hasRank = /^(排名|rank|名次)$/i.test(header[0] || '');
+  const hasTotal = /^(总积分|total|总分)$/i.test(header[header.length - 1] || '');
+  const startIdx = hasRank ? 1 : 0;
+  const endIdx = hasTotal ? header.length - 1 : header.length;
+  const cols = header.slice(startIdx, endIdx);
+  if (cols.length < 2) return null;
+  let namePos = cols.findIndex(c => /^(选手|姓名|name)$/i.test(c));
+  let idPos = cols.findIndex(c => /^(id|编号|用户id|用户编号|userid)$/i.test(c));
+  if (namePos < 0) namePos = (idPos >= 0 ? (idPos === 0 ? 1 : 0) : 0);
+  const tourNameList = [], tourColIdx = [];
+  cols.forEach((c, i) => { if (i !== namePos && i !== idPos) { tourNameList.push(c); tourColIdx.push(i); } });
+  if (tourNameList.length === 0) return null;
+  const tourMap = tourNameList.map(nm => {
+    const ex = curTours.find(t => t.name === nm);
+    return ex ? ex.id : ('t_' + Date.now() + '_' + nm);
+  });
+  const playersOut = [];
+  for (let k = 1; k < lines.length; k++) {
+    const cells = splitCells(lines[k]);
+    const rowCols = cells.slice(startIdx, startIdx + cols.length);
+    const rawName = (rowCols[namePos] || '').trim();
+    if (!rawName) continue;
+    const rawId = (idPos >= 0 ? (rowCols[idPos] || '') : '').trim();
+    const events = tourColIdx.map(ci => Math.max(0, parseInt(rowCols[ci]) || 0));
+    playersOut.push({ id: rawId, name: rawName, events });
+  }
+  if (playersOut.length === 0) return null;
+  const newTours = tourNameList.map((nm, i) => ({ id: tourMap[i], name: nm, date: '' }));
+  return { tournaments: newTours, players: playersOut };
+}
+
+/* ---- 把导入的赛事对齐到现有赛事（新增的列追加） ---- */
+function reconcileTournaments(importedTours, curTours) {
+  const finalTours = curTours.map(t => ({ id: t.id, name: t.name, date: t.date || '' }));
+  const nameToIdx = {};
+  finalTours.forEach((t, i) => { nameToIdx[t.name] = i; });
+  const importedColIdxToFinalIdx = [];
+  importedTours.forEach(it => {
+    if (nameToIdx[it.name] !== undefined) {
+      importedColIdxToFinalIdx.push(nameToIdx[it.name]);
+    } else {
+      const id = 't_' + Date.now() + '_' + finalTours.length + '_' + Math.floor(Math.random() * 1e4);
+      finalTours.push({ id, name: it.name, date: '' });
+      nameToIdx[it.name] = finalTours.length - 1;
+      importedColIdxToFinalIdx.push(finalTours.length - 1);
+    }
+  });
+  return { finalTours, importedColIdxToFinalIdx };
+}
+
+function alignEvents(importedEvents, rec) {
+  const ev = new Array(rec.finalTours.length).fill(0);
+  importedEvents.forEach((v, i) => {
+    const fi = rec.importedColIdxToFinalIdx[i];
+    if (fi !== undefined) ev[fi] = Math.max(0, parseInt(v) || 0);
+  });
+  return ev;
+}
+
+function idGen(byId, result) {
+  let n, g = 0;
+  do {
+    n = 'U' + Date.now().toString(36).slice(-5) + Math.floor(Math.random() * 900 + 100);
+    g++;
+  } while ((byId.has(normId(n)) || result.some(x => normId(x.id) === normId(n))) && g < 60);
+  return n;
+}
+
+/* ---- 分类导入行：能自动匹配的走 auto，需确认的走 items ---- */
+function classifyImport(rows, rec, curPlayers) {
+  const exById = new Map(), exByName = new Map();
+  curPlayers.forEach(p => {
+    const id = normId(p.id); if (id) exById.set(id, p);
+    const nm = normName(p.name); if (nm) exByName.set(nm, p);
+  });
+  const impIdCount = {}, impNameCount = {};
+  rows.forEach(r => {
+    const id = normId(r.id); if (id) impIdCount[id] = (impIdCount[id] || 0) + 1;
+    const nm = normName(r.name); if (nm) impNameCount[nm] = (impNameCount[nm] || 0) + 1;
+  });
+  const items = [], auto = [];
+  rows.forEach(r => {
+    const id = normId(r.id), nm = normName(r.name);
+    let cat, ref = null;
+    if (id) {
+      if (exById.has(id)) { cat = 'update_id'; ref = exById.get(id); }
+      else if (impIdCount[id] > 1) { cat = 'id_dup'; }
+      else if (nm && exByName.has(nm) && normId(exByName.get(nm).id) !== id) { cat = 'name_conflict'; ref = exByName.get(nm); }
+      else { cat = 'new'; }
+    } else {
+      if (nm && exByName.has(nm)) { cat = 'missing_id_update'; ref = exByName.get(nm); }
+      else if (nm && impNameCount[nm] > 1) { cat = 'name_dup'; }
+      else { cat = 'missing_id_new'; }
+    }
+    if (cat === 'update_id') auto.push({ op: 'update', player: ref, row: r });
+    else if (cat === 'new') auto.push({ op: 'create', row: r });
+    else items.push({ cat, ref, row: r });
+  });
+  return { items, auto };
+}
+
+const CAT_LABEL = {
+  id_dup: 'ID 在文件中重复',
+  missing_id_update: '无 ID，但姓名与现有选手一致',
+  missing_id_new: '无 ID，且姓名不存在（按新选手）',
+  name_conflict: 'ID 不同但姓名与现有选手相同',
+};
+
+function AdminApp() {
+  const { message } = App.useApp();
+  const [token, setToken] = React.useState(localStorage.getItem('tennis_token') || '');
+  const [players, setPlayers] = React.useState([]);
+  const [tournaments, setTournaments] = React.useState([]);
+  const [tab, setTab] = React.useState('edit');
+  const [dirty, setDirty] = React.useState(false);
+  const [updatedAt, setUpdatedAt] = React.useState('');
+  const [dragFrom, setDragFrom] = React.useState(null);
+  const [addTourOpen, setAddTourOpen] = React.useState(false);
+  const [addTourName, setAddTourName] = React.useState('');
+  const [importText, setImportText] = React.useState('');
+  const [conflict, setConflict] = React.useState(null); // {open, items, auto, rec, actions}
+  const [busy, setBusy] = React.useState(false);
+
+  React.useEffect(() => {
+    const t = localStorage.getItem('tennis_token');
+    if (t) { setToken(t); loadData(t); }
+    // eslint-disable-next-line
+  }, []);
+
+  function setDirtyOn() { setDirty(true); }
+
+  async function loadData(tk) {
+    const useTk = tk || token;
+    try {
+      const res = await fetch('/api/admin/data', { headers: { 'Authorization': 'Bearer ' + useTk } });
+      if (!res.ok) { if (res.status === 401) doLogout(); return; }
+      const d = await res.json();
+      setPlayers((d.players || []).map((p, i) => ({
+        rid: 'r_' + Date.now() + '_' + i,
+        id: p.id || '',
+        name: p.name,
+        events: Array.isArray(p.events) ? p.events : [],
+        total: p.total,
+      })));
+      setTournaments(d.tournaments || []);
+      setDirty(false);
+      setUpdatedAt(d.updatedAt);
+    } catch (e) { message.error('加载失败：' + e.message); }
+  }
+
+  async function doLogin(pw) {
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pw })
+      });
+      if (!res.ok) { const d = await res.json().catch(() => ({})); message.error(d.error || '登录失败'); return false; }
+      const d = await res.json();
+      setToken(d.token);
+      localStorage.setItem('tennis_token', d.token);
+      await loadData(d.token);
+      return true;
+    } catch (e) { message.error('网络错误：' + e.message); return false; }
+  }
+
+  function doLogout() {
+    if (token) fetch('/api/admin/logout', { method: 'POST', headers: { 'Authorization': 'Bearer ' + token } }).catch(() => {});
+    localStorage.removeItem('tennis_token');
+    setToken(''); setPlayers([]); setTournaments([]); setDirty(false);
+  }
+
+  function updateName(rid, v) {
+    setPlayers(prev => prev.map(p => p.rid === rid ? { ...p, name: v } : p));
+    setDirtyOn();
+  }
+  function updateId(rid, v) {
+    setPlayers(prev => prev.map(p => p.rid === rid ? { ...p, id: v } : p));
+    setDirtyOn();
+  }
+  function updateEvent(rid, ti, v) {
+    const val = v == null ? 0 : Math.max(0, parseInt(v) || 0);
+    setPlayers(prev => prev.map(p => p.rid === rid ? { ...p, events: p.events.map((e, j) => j === ti ? val : e) } : p));
+    setDirtyOn();
+  }
+  function deletePlayer(rid) {
+    setPlayers(prev => prev.filter(p => p.rid !== rid));
+    setDirtyOn();
+  }
+  function addPlayer() {
+    setPlayers(prev => [...prev, { rid: 'r_' + Date.now() + '_' + Math.random(), id: '', name: '新选手', events: tournaments.map(() => 0) }]);
+    setDirtyOn();
+  }
+  function addTour() {
+    const nm = addTourName.trim();
+    if (!nm) { message.warning('请输入赛事名称'); return; }
+    setTournaments(prev => [...prev, { id: 't_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6), name: nm, date: '' }]);
+    setPlayers(prev => prev.map(p => ({ ...p, events: [...p.events, 0] })));
+    setAddTourOpen(false); setAddTourName(''); setDirtyOn();
+  }
+  function deleteTour(ti) {
+    setTournaments(prev => prev.filter((_, i) => i !== ti));
+    setPlayers(prev => prev.map(p => ({ ...p, events: p.events.filter((_, j) => j !== ti) })));
+    setDirtyOn();
+  }
+  function moveTournament(from, to) {
+    if (from === to) return;
+    setTournaments(prev => {
+      const arr = [...prev]; const [m] = arr.splice(from, 1); arr.splice(to, 0, m); return arr;
+    });
+    setPlayers(prev => prev.map(p => {
+      const ev = [...p.events]; const [m] = ev.splice(from, 1); ev.splice(to, 0, m); return { ...p, events: ev };
+    }));
+    setDirtyOn();
+  }
+
+  function findDuplicates() {
+    const nameCount = {}, idCount = {};
+    players.forEach(p => {
+      const n = normName(p.name); if (n) nameCount[n] = (nameCount[n] || 0) + 1;
+      const id = normId(p.id); if (id) idCount[id] = (idCount[id] || 0) + 1;
+    });
+    const dup = new Set();
+    players.forEach(p => {
+      const n = normName(p.name); if (n && nameCount[n] > 1) dup.add(p.rid);
+      const id = normId(p.id); if (id && idCount[id] > 1) dup.add(p.rid);
+    });
+    if (dup.size === 0) { message.info('未发现重名 / 重复 ID 的选手'); }
+    else { message.warning('已高亮 ' + dup.size + ' 个重复项（重名或重复 ID），请检查后删除多余行'); }
+    return dup;
+  }
+  const [dupSet, setDupSet] = React.useState(new Set());
+  const onFindDup = () => setDupSet(findDuplicates());
+
+  function downloadTemplate() {
+    const header = ['排名', 'ID', '选手', ...tournaments.map(t => t.name), '总积分'];
+    const lines = [header.join(',')];
+    players.forEach((p, i) => {
+      lines.push([i + 1, p.id, p.name, ...p.events, sumEvents(p.events)].join(','));
+    });
+    for (let b = 0; b < 5; b++) {
+      lines.push([players.length + b + 1, '', '新选手', ...tournaments.map(() => 0), 0].join(','));
+    }
+    const blob = new Blob(['﻿' + lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = '界外网球积分导入模板.csv'; a.click();
+    URL.revokeObjectURL(url);
+    message.success('模板已下载（含现有 ' + players.length + ' 位选手 + 5 个空行）');
+  }
+
+  function applyImport(resolutions, rec) {
+    const finalTours = rec.finalTours;
+    const cur = players.map(p => ({ id: p.id, name: p.name, events: (p.events || []).slice() }));
+    const byId = new Map(), byName = new Map();
+    cur.forEach(p => { const id = normId(p.id); if (id) byId.set(id, p); const nm = normName(p.name); if (nm) byName.set(nm, p); });
+    const result = [];
+    function upsert(row, asNew) {
+      const idRaw = normId(row.id);
+      let tgt = asNew ? null : (idRaw ? byId.get(idRaw) : null);
+      if (!tgt && !asNew) { const nm = normName(row.name); if (nm) tgt = byName.get(nm); }
+      if (tgt) {
+        const base = tgt.events.slice(); while (base.length < finalTours.length) base.push(0);
+        row.events.forEach((v, i) => { const fi = rec.importedColIdxToFinalIdx[i]; if (fi !== undefined) base[fi] = Math.max(0, parseInt(v) || 0); });
+        tgt.name = row.name; tgt.events = base;
+        if (!result.includes(tgt)) result.push(tgt);
+        return;
+      }
+      const newId = idRaw || idGen(byId, result);
+      const np = { id: newId, name: row.name, events: row.events.slice() };
+      byId.set(normId(newId), np); result.push(np);
+    }
+    resolutions.forEach(r => {
+      if (r.op === 'update') {
+        const ref = r.player;
+        let tgt = normId(ref.id) ? byId.get(normId(ref.id)) : byName.get(normName(ref.name));
+        if (!tgt) tgt = cur.find(p => p === ref) || null;
+        if (tgt) {
+          const base = tgt.events.slice(); while (base.length < finalTours.length) base.push(0);
+          r.row.events.forEach((v, i) => { const fi = rec.importedColIdxToFinalIdx[i]; if (fi !== undefined) base[fi] = Math.max(0, parseInt(v) || 0); });
+          tgt.name = r.row.name; tgt.events = base;
+          if (!result.includes(tgt)) result.push(tgt);
+        } else upsert(r.row, false);
+      } else if (r.op === 'create') { upsert(r.row, true); }
+    });
+    cur.forEach(p => { if (!result.includes(p)) result.push(p); });
+    result.forEach(p => { while (p.events.length < finalTours.length) p.events.push(0); p.events.length = finalTours.length; });
+    setPlayers(result.map((p, i) => ({ rid: 'r_' + Date.now() + '_' + i, id: p.id, name: p.name, events: p.events.slice() })));
+    setTournaments(finalTours.map(t => ({ id: t.id, name: t.name, date: t.date })));
+  }
+
+  function runImport() {
+    const parsed = parseGrid(importText, tournaments);
+    if (!parsed || parsed.players.length === 0) { message.error('未能解析到有效数据（需含表头：排名,ID,选手,各赛事…,总积分）'); return; }
+    const rec = reconcileTournaments(parsed.tournaments, tournaments);
+    const rows = parsed.players.map(p => ({ id: p.id, name: p.name, events: alignEvents(p.events, rec) }));
+    const { items, auto } = classifyImport(rows, rec, players);
+    if (items.length === 0) {
+      applyImport([...auto.map(a => ({ op: a.op, player: a.player, row: a.row }))], rec);
+      message.success('导入完成（' + rows.length + ' 行，无冲突），记得点击「保存到服务器」');
+      setDirty(true);
+    } else {
+      const actions = items.map(it => {
+        if (it.cat === 'id_dup') return 'skip';
+        if (it.cat === 'missing_id_update') return 'update';
+        if (it.cat === 'missing_id_new') return 'create';
+        if (it.cat === 'name_conflict') return 'update';
+        return 'skip';
+      });
+      setConflict({ open: true, items, auto, rec, rows, actions });
+    }
+  }
+
+  function confirmConflict() {
+    if (!conflict) return;
+    const resolutions = conflict.auto.map(a => ({ op: a.op, player: a.player, row: a.row }));
+    conflict.items.forEach((it, i) => {
+      const act = conflict.actions[i];
+      if (act === 'update') resolutions.push({ op: 'update', player: it.ref, row: it.row });
+      else if (act === 'create') resolutions.push({ op: 'create', row: it.row });
+    });
+    applyImport(resolutions, conflict.rec);
+    setConflict(null);
+    message.success('已按确认结果合并导入，记得点击「保存到服务器」');
+    setDirty(true);
+  }
+
+  async function save() {
+    setBusy(true);
+    try {
+      const payload = {
+        players: players.map(p => ({ id: p.id, name: p.name, events: p.events, total: sumEvents(p.events) })),
+        tournaments,
+      };
+      const res = await fetch('/api/admin/data', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) {
+        if (res.status === 401) { doLogout(); }
+        else { const d = await res.json().catch(() => ({})); message.error(d.error || '保存失败'); }
+        return;
+      }
+      const d = await res.json();
+      await loadData();
+      message.success('已保存到服务器，共 ' + d.count + ' 位选手');
+    } catch (e) { message.error('网络错误：' + e.message); }
+    finally { setBusy(false); }
+  }
+
+  function buildColumns() {
+    const cols = [
+      { title: '#', dataIndex: '_idx', width: 46, align: 'center', render: (_, r) => r._idx + 1 },
+      {
+        title: 'ID', dataIndex: 'id', width: 120,
+        render: (v, r) => <Input size="small" value={r.id} placeholder="用户ID"
+          onChange={e => updateId(r.rid, e.target.value)} />
+      },
+      {
+        title: '选手', dataIndex: 'name', width: 140,
+        render: (v, r) => <Input size="small" value={r.name} placeholder="选手名"
+          onChange={e => updateName(r.rid, e.target.value)} />
+      },
+    ];
+    tournaments.forEach((t, ti) => {
+      cols.push({
+        title: (
+          <div className="tour-head" title="按住拖动可调整赛事顺序">
+            <span className="th-name" draggable onDragStart={() => setDragFrom(ti)}
+              onDragEnd={() => setDragFrom(null)}>{t.name}</span>
+            <button className="th-del" title="删除该赛事列" onMouseDown={e => e.stopPropagation()}
+              onClick={() => {
+                Modal.confirm({
+                  title: '删除赛事「' + t.name + '」？',
+                  content: '该列所有选手积分将一并丢失。',
+                  okText: '删除', okType: 'danger', cancelText: '取消',
+                  onOk: () => deleteTour(ti)
+                });
+              }}>×</button>
+          </div>
+        ),
+        dataIndex: 'e' + ti, width: 92, align: 'center',
+        render: (_, r) => <InputNumber size="small" min={0} value={r.events[ti] || 0}
+          onChange={v => updateEvent(r.rid, ti, v)} style={{ width: '100%' }} />,
+        onHeaderCell: () => ({
+          draggable: true,
+          style: { cursor: 'move', userSelect: 'none' },
+          onDragOver: e => e.preventDefault(),
+          onDrop: () => { if (dragFrom != null && dragFrom !== ti) moveTournament(dragFrom, ti); setDragFrom(null); },
+        }),
+      });
+    });
+    cols.push({
+      title: '总积分', dataIndex: 'total', width: 90, align: 'right',
+      render: (_, r) => <b>{sumEvents(r.events)}</b>
+    });
+    cols.push({
+      title: '操作', dataIndex: '_op', width: 80, align: 'center',
+      render: (_, r) => (
+        <Popconfirm title="删除该选手？" onConfirm={() => deletePlayer(r.rid)} okText="删除" cancelText="取消">
+          <Button size="small" danger type="text">删除</Button>
+        </Popconfirm>
+      )
+    });
+    return cols;
+  }
+
+  const dataSource = players.map((p, i) => ({ ...p, key: p.rid, _idx: i }));
+
+  const previewList = [...players].sort((a, b) => sumEvents(b.events) - sumEvents(a.events));
+  const maxTotal = Math.max(1, ...previewList.map(p => sumEvents(p.events)));
+
+  if (!token) {
+    return (
+      <div className="login-wrap">
+        <Card style={{ width: 360 }}>
+          <Title level={4} style={{ marginTop: 0 }}>界外网球 · 管理后台</Title>
+          <Text type="secondary">请输入管理员密码</Text>
+          <LoginForm onLogin={doLogin} />
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="app-wrap">
+      <div className="topbar">
+        <div>
+          <h1>界外网球 · 积分管理后台</h1>
+          <div className="sub">
+            共 {players.length} 位选手 · {tournaments.length} 站赛事
+            {updatedAt ? ' · 更新于 ' + dayjs(updatedAt).format('YYYY-MM-DD HH:mm') : ''}
+          </div>
+        </div>
+        <Space>
+          {dirty ? <Tag color="orange">有未保存的修改</Tag> : <Tag color="green">已同步</Tag>}
+          <Button onClick={doLogout}>登出</Button>
+        </Space>
+      </div>
+
+      <Tabs activeKey={tab} onChange={setTab} items={[
+        {
+          key: 'edit', label: '表格编辑',
+          children: (
+            <div>
+              <Space wrap style={{ marginBottom: 10 }}>
+                <Button type="primary" onClick={addPlayer}>+ 添加选手</Button>
+                <Button onClick={() => setAddTourOpen(true)}>+ 添加赛事</Button>
+                <Button onClick={onFindDup}>查找重复</Button>
+                <Button onClick={downloadTemplate}>下载模板</Button>
+                <Button type="primary" onClick={save} loading={busy}>保存到服务器</Button>
+              </Space>
+              <div className="hint">提示：按住赛事表头（带 «» 文字处）左右拖动可调整赛事顺序；红色高亮为查出的重复项。</div>
+              <Table
+                size="small"
+                rowKey="rid"
+                columns={buildColumns()}
+                dataSource={dataSource}
+                scroll={{ x: 'max-content' }}
+                pagination={false}
+                rowClassName={r => dupSet.has(r.rid) ? 'row-dup' : ''}
+              />
+            </div>
+          )
+        },
+        {
+          key: 'import', label: '批量导入',
+          children: (
+            <div>
+              <Alert className="import-alert" type="info" showIcon
+                message="ID 匹配导入（合并，不整体替换）"
+                description="导入时按「用户ID」匹配现有选手：ID 一致则更新其积分；无 ID 但姓名一致则更新；其余作为新选手。若遇到 缺失ID / ID冲突 / 姓名冲突，会弹出逐项确认框让你决定。文件中未出现的选手将被保留（不会误删）。" />
+              <Space wrap style={{ marginBottom: 10 }}>
+                <Button onClick={downloadTemplate}>下载模板</Button>
+                <Button type="primary" onClick={runImport}>解析并导入</Button>
+              </Space>
+              <Input.TextArea rows={14} value={importText} onChange={e => setImportText(e.target.value)}
+                placeholder={'粘贴网格文本，表头示例：\n排名,ID,选手,6/28 赢满贯500赛,7/11 伟劲500赛,总积分\n1,RT1,虎,500,500,1000'} />
+            </div>
+          )
+        },
+        {
+          key: 'preview', label: '实时预览',
+          children: (
+            <List
+              dataSource={previewList}
+              renderItem={(p, idx) => (
+                <List.Item>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, width: '100%' }}>
+                    <Tag color={idx < 3 ? 'gold' : 'default'}>{idx + 1}</Tag>
+                    <div style={{ width: 140 }}>{p.name}</div>
+                    <Progress percent={Math.round(sumEvents(p.events) / maxTotal * 100)} style={{ flex: 1 }} />
+                    <b style={{ width: 60, textAlign: 'right' }}>{sumEvents(p.events)}</b>
+                  </div>
+                </List.Item>
+              )}
+            />
+          )
+        },
+      ]} />
+
+      <Modal title="添加赛事" open={addTourOpen} onOk={addTour} onCancel={() => setAddTourOpen(false)}
+        okText="添加" cancelText="取消">
+        <Input placeholder="赛事名称，如 8/15 新赛事500赛" value={addTourName} onChange={e => setAddTourName(e.target.value)} />
+      </Modal>
+
+      <Modal title="导入冲突 — 请逐项确认" open={conflict ? conflict.open : false}
+        onOk={confirmConflict} onCancel={() => setConflict(null)} width={640}
+        okText="确认并导入" cancelText="取消">
+        {conflict && (
+          <div>
+            {conflict.items.map((it, i) => (
+              <div className="conflict-row" key={i}>
+                <div className="desc">
+                  <div><b>{CAT_LABEL[it.cat] || it.cat}</b></div>
+                  <div>导入：{it.row.name}（ID: {it.row.id || '空'}）积分 [{it.row.events.join(', ')}]</div>
+                  {it.ref && <div style={{ color: '#888' }}>现有：{it.ref.name}（ID: {it.ref.id || '空'}）</div>}
+                </div>
+                <div className="act">
+                  <Select value={conflict.actions[i]} style={{ width: '100%' }}
+                    onChange={v => { const a = [...conflict.actions]; a[i] = v; setConflict({ ...conflict, actions: a }); }}>
+                    {(it.cat === 'id_dup' || it.cat === 'missing_id_new') && <Select.Option value="create">作为新选手</Select.Option>}
+                    {(it.cat === 'missing_id_update' || it.cat === 'name_conflict') && <Select.Option value="update">更新现有</Select.Option>}
+                    <Select.Option value="skip">跳过此行</Select.Option>
+                  </Select>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </Modal>
+    </div>
+  );
+}
+
+function LoginForm({ onLogin }) {
+  const [pw, setPw] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
+  const submit = async () => {
+    if (!pw) { antd.message.warning('请输入密码'); return; }
+    setLoading(true);
+    const ok = await onLogin(pw);
+    setLoading(false);
+  };
+  return (
+    <Space direction="vertical" style={{ width: '100%', marginTop: 12 }}>
+      <Input.Password placeholder="管理员密码" value={pw}
+        onChange={e => setPw(e.target.value)} onPressEnter={submit} />
+      <Button type="primary" block loading={loading} onClick={submit}>登录</Button>
+    </Space>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <ConfigProvider theme={{ token: { colorPrimary: '#1f6f4a' } }}>
+    <App>
+      <AdminApp />
+    </App>
+  </ConfigProvider>
+);
+</script>
+</body>
+</html>

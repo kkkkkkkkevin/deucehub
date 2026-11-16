@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/assets/site.css">
+    <link rel="icon" type="image/jpeg" href="/logo.jpg">
+    <link rel="apple-touch-icon" href="/logo.jpg">
+    <link rel="stylesheet" href="/cursor.css">
+    <title>网球三国杀 · 规则手册 | 界外网球</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", Arial, sans-serif; color: #2C2C2A; background: linear-gradient(180deg, #f5f0ff 0%, #e8f5e9 50%, #fffde7 100%); line-height: 1.7; padding: 0; min-height: 100vh; }
+        .stars-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+        .star { position: absolute; background: #5B4B8A; border-radius: 50%; animation: twinkle 4s infinite; }
+        @keyframes twinkle { 0%,100% { opacity: 0.15; } 50% { opacity: 0.5; } }
+
+        .navbar { background: rgba(255,255,255,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(91,75,138,0.1); padding: 0 40px; position: sticky; top: 0; z-index: 100; }
+        .navbar-content { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 72px; }
+        .logo-container { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .logo { width: 44px; height: 44px; border-radius: 10px; border: 2px solid #FFD700; object-fit: cover; box-shadow: 0 0 15px rgba(255,215,0,0.3); }
+        .brand-text { display: flex; flex-direction: column; }
+        .brand-name { color: #5B4B8A; font-size: 20px; font-weight: 700; letter-spacing: 2px; line-height: 1.2; }
+        .brand-en { color: #9e8ec7; font-size: 11px; letter-spacing: 3px; font-weight: 500; text-transform: uppercase; }
+        .nav-links { display: flex; align-items: center; gap: 8px; }
+        .nav-links a { color: #5B4B8A; text-decoration: none; font-size: 15px; font-weight: 500; padding: 8px 16px; border-radius: 6px; transition: all 0.2s ease; }
+        .nav-links a:hover { color: #4CAF50; background: #f0f7f0; }
+        .nav-links a.active { color: #4CAF50; font-weight: 600; }
+        .nav-dropdown { position: relative; }
+        .nav-dropdown > a::after { content: ' ▾'; font-size: 10px; }
+        .nav-dropdown-menu { display: none; position: absolute; top: 100%; left: 0; background: #fff; border-radius: 10px; box-shadow: 0 8px 24px rgba(91,75,138,0.15); min-width: 200px; padding: 8px 0; z-index: 200; }
+        .nav-dropdown:hover .nav-dropdown-menu { display: block; }
+        .nav-dropdown-menu a { display: block; padding: 10px 20px; font-size: 14px; color: #5B4B8A; text-decoration: none; transition: all 0.2s; }
+        .nav-dropdown-menu a:hover { background: #f5f0ff; color: #4CAF50; }
+        .nav-dropdown:hover > a { color: #4CAF50; background: #f0f7f0; }
+
+        .wrap { max-width: 880px; margin: 0 auto; background: #FFFFFF; border-radius: 16px; padding: 48px 56px; box-shadow: 0 4px 24px rgba(91,75,138,0.08); position: relative; z-index: 1; margin-top: 40px; margin-bottom: 40px; }
+        header { text-align: center; padding-bottom: 32px; border-bottom: 1px solid #D3D1C7; margin-bottom: 40px; }
+        h1 { font-size: 32px; font-weight: 600; letter-spacing: 4px; color: #26215C; margin-bottom: 8px; }
+        .subtitle { font-size: 14px; color: #5F5E5A; letter-spacing: 1px; }
+        .tagline { margin-top: 16px; font-size: 13px; color: #888780; font-style: italic; }
+        h2 { font-size: 20px; font-weight: 600; color: #26215C; margin: 40px 0 16px; padding-left: 12px; border-left: 4px solid #534AB7; }
+        h3 { font-size: 16px; font-weight: 600; color: #3C3489; margin: 24px 0 12px; }
+        h4 { font-size: 14px; font-weight: 600; margin: 16px 0 8px; color: #444441; }
+        p { font-size: 14px; margin-bottom: 12px; color: #444441; }
+        ul, ol { margin: 0 0 16px 20px; font-size: 14px; color: #444441; }
+        li { margin-bottom: 6px; }
+        .lead { font-size: 15px; color: #444441; background: #EEEDFE; border-radius: 8px; padding: 16px 20px; margin-bottom: 24px; }
+        .type-block { border: 1px solid #D3D1C7; border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; }
+        .type-block.restrict { border-left: 4px solid #A32D2D; }
+        .type-block.buff { border-left: 4px solid #185FA5; }
+        .type-block.instant { border-left: 4px solid #3B6D11; }
+        .type-block.special { border-left: 4px solid #534AB7; }
+        .type-block.hero { border-left: 4px solid #BA7517; }
+        .type-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+        .type-badge { display: inline-block; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; color: #FFFFFF; }
+        .type-badge.r { background: #A32D2D; }
+        .type-badge.b { background: #185FA5; }
+        .type-badge.g { background: #3B6D11; }
+        .type-badge.p { background: #534AB7; }
+        .type-badge.h { background: #BA7517; }
+        .type-desc { font-size: 13px; color: #5F5E5A; }
+        table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+        th { background: #F1EFE8; text-align: left; padding: 10px 12px; font-weight: 600; color: #444441; border-bottom: 1px solid #D3D1C7; }
+        td { padding: 10px 12px; border-bottom: 1px solid #E8E6DF; vertical-align: top; color: #444441; }
+        tr:hover td { background: #FAFAF8; }
+        .card-name { font-weight: 600; color: #2C2C2A; white-space: nowrap; }
+        .rarity { font-weight: 600; white-space: nowrap; }
+        .r-N { color: #888780; } .r-R { color: #185FA5; } .r-SR { color: #534AB7; } .r-SSR { color: #A32D2D; }
+        .flow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 16px 0; }
+        .flow-step { background: #EEEDFE; border: 1px solid #AFA9EC; border-radius: 8px; padding: 10px 16px; font-size: 13px; color: #3C3489; font-weight: 500; }
+        .flow-arrow { color: #534AB7; font-size: 18px; font-weight: 600; }
+        .timing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 16px 0; }
+        .timing-card { background: #F1EFE8; border-radius: 8px; padding: 14px 16px; }
+        .timing-card h4 { margin: 0 0 4px; color: #3C3489; }
+        .timing-card p { margin: 0; font-size: 12px; color: #5F5E5A; }
+        .tip { background: #E1F5EE; border-left: 3px solid #0F6E56; border-radius: 4px; padding: 12px 16px; margin: 12px 0; font-size: 13px; color: #085041; }
+        .warn { background: #FAECE7; border-left: 3px solid #993C1D; border-radius: 4px; padding: 12px 16px; margin: 12px 0; font-size: 13px; color: #712B13; }
+
+        .footer { background: rgba(91,75,138,0.05); border-top: 1px solid rgba(91,75,138,0.1); padding: 40px; text-align: center; position: relative; z-index: 1; }
+        .footer-content { max-width: 1200px; margin: 0 auto; }
+        .footer-logo { width: 48px; height: 48px; border-radius: 10px; border: 2px solid #FFD700; margin-bottom: 16px; box-shadow: 0 0 15px rgba(255,215,0,0.3); }
+        .footer-text { color: #888; font-size: 14px; margin-bottom: 8px; letter-spacing: 1px; }
+        .footer-copyright { color: #aaa; font-size: 12px; }
+        .footer-icp { margin-top: 12px; }
+        .footer-icp a { color: #aaa; font-size: 12px; text-decoration: none; }
+        .footer-icp a:hover { color: #5B4B8A; }
+        .footer-qr { display: flex; justify-content: center; gap: 40px; margin: 0 0 20px; flex-wrap: wrap; }
+        .qr-item { text-align: center; }
+        .qr-item img { width: 90px; height: 90px; border-radius: 8px; border: 1px solid #e0d6f0; }
+        .qr-item .qr-label { font-size: 12px; color: #5B4B8A; font-weight: 600; margin-top: 6px; }
+        .qr-item .qr-name { font-size: 11px; color: #999; margin-top: 1px; }
+
+        .back-link { display: inline-flex; align-items: center; gap: 6px; color: #5B4B8A; text-decoration: none; font-size: 14px; font-weight: 600; margin: 24px 0 0 40px; transition: color 0.2s; }
+        .back-link:hover { color: #4CAF50; }
+
+        @media (max-width: 600px) {
+            .wrap { padding: 24px 20px; }
+            h1 { font-size: 24px; }
+            table { font-size: 12px; }
+            th, td { padding: 8px; }
+            .navbar { padding: 0 16px; } .navbar-content { height: 60px; } .logo { width: 36px; height: 36px; }
+            .brand-name { font-size: 16px; } .nav-links { display: none; }
+            .back-link { margin-left: 20px; }
+        }
+    </style>
+</head>
+<body class="fixed-pad">
+    <div class="stars-bg" id="stars-bg"></div>
+
+    <header class="site-header" id="siteHeader">
+    <a href="/" class="logo-wrap">
+        <img src="/logo.jpg" alt="界外网球" class="logo">
+        <div class="brand-text"><span class="brand-name">界外网球</span><span class="brand-en">Rebel Tennis</span></div>
+    </a>
+    <nav class="nav">
+        <a href="/" class="">首页</a>
+        <a href="/ranking.html" class="">排名</a>
+        <a href="/matches.html" class="">比赛</a>
+        <div class="dropdown" id="navActivities">
+            <a href="#">活动 <span class="arrow">▾</span></a>
+            <div class="dropdown-menu">
+                <a href="/werewolf.html">🎭 网球狼人杀</a>
+                <a href="/sanguo.html">⚔️ 网球三国杀</a>
+            </div>
+        </div>
+    </nav>
+    <div class="burger" id="burger"><span></span><span></span><span></span></div>
+</header>
+<div class="mobile-menu" id="mobileMenu">
+    <a href="/">首页</a>
+    <a href="/ranking.html">排名</a>
+    <a href="/matches.html">比赛</a>
+    <a href="/werewolf.html">🎭 网球狼人杀</a>
+    <a href="/sanguo.html">⚔️ 网球三国杀</a>
+</div>
+
+    <a href="/" class="back-link">← 返回首页</a>
+
+    <div class="wrap">
+        <header>
+            <h1>网 球 三 国 杀</h1>
+            <div class="subtitle">TENNIS KILL — 卡牌网球趣味玩法</div>
+            <div class="tagline">把三国杀搬上球场，让每一分都变成心理博弈</div>
+        </header>
+
+        <div class="lead">
+            <strong>一句话玩法：</strong>正常打网球，但每人手里有一手卡牌。每一分或每一局开始前，双方可以打出"技能牌"——限制对方站位、强制击球方式、给自己加 buff、甚至暂停对方出牌。卡牌可在任意分内随时触发，让一记普通的回球瞬间变成战略决战。
+        </div>
+
+        <h2>一、游戏概述</h2>
+        <ul>
+            <li><strong>人数：</strong>2 人单打，或 4 人双打</li>
+            <li><strong>器材：</strong>网球场 + 球拍 + 球 + 一副 60–80 张卡牌（建议打印或手写卡片）</li>
+            <li><strong>时长：</strong>1–2 小时（一局正常网球比赛，一盘制或三盘制）</li>
+            <li><strong>计分：</strong>保留正常网球计分（15-30-40-game，6 局一盘）</li>
+            <li><strong>核心：</strong>每分可随时打牌触发技能，限制对方或增强自己</li>
+        </ul>
+
+        <h2>二、卡牌系统</h2>
+        <p>全套牌组分四大类共 30+ 张，另设武将牌（角色）。每张牌注明<strong>稀有度</strong>（N 普通 / R 稀有 / SR 史诗 / SSR 传说）与<strong>触发时机</strong>。</p>
+
+        <div class="type-block restrict">
+            <div class="type-head">
+                <span class="type-badge r">限制牌</span>
+                <span class="type-desc">打出后作用于对方，限制本分的站位、击球方式或人员。是进攻的核心。</span>
+            </div>
+
+            <h4>① 区域限制 — 把对方钉在难受的位置</h4>
+            <table>
+                <thead><tr><th style="width:120px;">卡名</th><th>效果</th><th style="width:90px;">稀有度</th></tr></thead>
+                <tbody>
+                    <tr><td class="card-name">无人区困兽</td><td>对方本分只能站在无人区，不能站一区或二区</td><td class="rarity r-N">N ★</td></tr>
+                    <tr><td class="card-name">底线之王</td><td>对方本分只能在底线后回球</td><td class="rarity r-N">N ★</td></tr>
+                    <tr><td class="card-name">中场拦截</td><td>对方本分只能在底线与发球线之间回球，不能站发球区</td><td class="rarity r-N">N ★</td></tr>
+                    <tr><td class="card-name">网前封杀</td><td>对方本分只能在发球区内回球</td><td class="rarity r-R">R ★★</td></tr>
+                    <tr><td class="card-name">一二区禁</td><td>对方本分不能站一区或二区（须站中线或无人区）</td><td class="rarity r-R">R ★★</td></tr>
+                    <tr><td class="card-name">钉桩</td><td>对方本分发球后不能移动脚步（脚钉死）</td><td class="rarity r-SR">SR ★★★</td></tr>
+                </tbody>
+            </table>
+
+            <h4>② 击球方式限制 — 强制对方用别扭的打法</h4>
+            <table>
+                <thead><tr><th style="width:120px;">卡名</th><th>效果</th><th style="width:90px;">稀有度</th></tr></thead>
+                <tbody>
+                    <tr><td class="card-name">正手独尊</td><td>对方本分只能用正手回球</td><td class="rarity r-N">N ★</td></tr>
+                    <tr><td class="card-name">反手为王</td><td>对方本分只能用反手回球</td><td class="rarity r-N">N ★</td></tr>
+                    <tr><td class="card-name">截击大师</td><td>对方本分只能用截击（不能落地后击球）</td><td class="rarity r-R">R ★★</td></tr>
+                    <tr><td class="card-name">高球专家</td><td>对方本分只能挑高球</td><td class="rarity r-N">N ★</td></tr>
+                    <tr><td class="card-name">小球手</td><td>对方本分只能放小球</td><td class="rarity r-R">R ★★</td></tr>
+                    <tr><td class="card-name">月亮球</td><td>对方本分只能打上旋高球（必须高过网 2 米）</td><td class="rarity r-R">R ★★</td></tr>
+                    <tr><td class="card-name">弱手发球</td><td>对方本分发球必须用非惯用手</td><td class="rarity r-SR">SR ★★★</td></tr>
+                </tbody>
+            </table>
+
+            <h4>③ 人员限制（仅双打）</h4>
+            <table>
+                <thead><tr><th style="width:120px;">卡名</th><th>效果</th><th style="width:90px;">稀有度</th></tr></thead>
+                <tbody>
+                    <tr><td class="card-name">调虎离山</td><td>替换对方某一人为更弱的替补（对方指定谁被换下）</td><td class="rarity r-SR">SR ★★★</td></tr>
+                    <tr><td class="card-name">一人当关</td><td>对方本分只能由一人回球，搭档不能碰球</td><td class="rarity r-SR">SR ★★★</td></tr>
+                    <tr><td class="card-name">搭档隐形</td><td>对方本分搭档不能上网，只能站底线</td><td class="rarity r-R">R ★★</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="type-block buff">
+            <div class="type-head">
+                <span class="type-badge b">增益牌</span>
+                <span class="type-desc">作用于自己，本分获得额外能力或容错。是防守反击的关键。</span>
+            </div>
+            <table>
+                <thead><tr><th style="width:120px;">卡名</th><th>效果</th><th style="width:90px;">稀有度</th></tr></thead>
+                <tbody>
+                    <tr><td class="card-name">稳如泰山</td><td>本分对方所有限制牌对自己无效（万能免疫）</td><td class="rarity r-N">N ★</td></tr>
+                    <tr><td class="card-name">二发必中</td><td>本分二发必进（不算双误）</td><td class="rarity r-R">R ★★</td></tr>
+                    <tr><td class="card-name">超能发球</td><td>本分发球有 3 次机会（而非 2 次）</td><td class="rarity r-R">R ★★</td></tr>
+                    <tr><td class="card-name">神之手</td><td>本分可救一个出界球，算作好球，对方继续回球</td><td class="rarity r-R">R ★★</td></tr>
+                    <tr><td class="card-name">双倍回合</td><td>本分球可落地两次再回（双打可两人各击一次）</td><td class="rarity r-SR">SR ★★★</td></tr>
+                    <tr><td class="card-name">鹰眼挑战</td><td>挑战一次判罚，若成功则判己方得分</td><td class="rarity r-N">N ★</td></tr>
+                    <tr><td class="card-name">金钟罩</td><td>本分若失分，可重打这一分（每场限 1 次）</td><td class="rarity r-SSR">SSR ★★★★</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="type-block instant">
+            <div class="type-head">
+                <span class="type-badge g">即时牌</span>
+                <span class="type-desc">在对方行动的瞬间打出，用于打断、抵消或偷袭。是博弈的核心。</span>
+            </div>
+            <table>
+                <thead><tr><th style="width:120px;">卡名</th><th>效果</th><th style="width:90px;">稀有度</th></tr></thead>
+                <tbody>
+                    <tr><td class="card-name">反击</td><td>当对方使用限制牌时立即抵消，该牌作废</td><td class="rarity r-N">N ★</td></tr>
+                    <tr><td class="card-name">闪避</td><td>当对方得分时，要求对方重发该分</td><td class="rarity r-N">N ★</td></tr>
+                    <tr><td class="card-name">偷袭</td><td>对方发球前打出，对方本分必须用非惯用手发球</td><td class="rarity r-R">R ★★</td></tr>
+                    <tr><td class="card-name">偷牌</td><td>随机偷看并拿走对方一张手牌</td><td class="rarity r-R">R ★★</td></tr>
+                    <tr><td class="card-name">禁声</td><td>对方本分不能与搭档交流（双打）</td><td class="rarity r-N">N ★</td></tr>
+                    <tr><td class="card-name">以牙还牙</td><td>把对方刚打出的限制牌反弹给对方自己承受</td><td class="rarity r-SR">SR ★★★</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="type-block special">
+            <div class="type-head">
+                <span class="type-badge p">特殊牌</span>
+                <span class="type-desc">改变比赛规则或得分的高风险高回报牌，往往扭转战局。</span>
+            </div>
+            <table>
+                <thead><tr><th style="width:120px;">卡名</th><th>效果</th><th style="width:90px;">稀有度</th></tr></thead>
+                <tbody>
+                    <tr><td class="card-name">命运抽牌</td><td>立即抽两张牌</td><td class="rarity r-N">N ★</td></tr>
+                    <tr><td class="card-name">交换场地</td><td>本分双方交换场地后再打</td><td class="rarity r-R">R ★★</td></tr>
+                    <tr><td class="card-name">双倍得分</td><td>本分若得分，算两分</td><td class="rarity r-SR">SR ★★★</td></tr>
+                    <tr><td class="card-name">复活</td><td>取消对方上一分得分（回退一分）</td><td class="rarity r-SR">SR ★★★</td></tr>
+                    <tr><td class="card-name">时间停止</td><td>本分对方不能使用任何牌，你享有绝对主动权</td><td class="rarity r-SSR">SSR ★★★★</td></tr>
+                    <tr><td class="card-name">乾坤大挪移</td><td>本分若失分，双方比分互换</td><td class="rarity r-SSR">SSR ★★★★</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="type-block hero">
+            <div class="type-head">
+                <span class="type-badge h">武将牌（角色）</span>
+                <span class="type-desc">每人在赛前抽一张角色牌，整场拥有一个被动技能。借鉴三国杀武将机制。</span>
+            </div>
+            <table>
+                <thead><tr><th style="width:120px;">角色</th><th>被动技能</th><th style="width:90px;">定位</th></tr></thead>
+                <tbody>
+                    <tr><td class="card-name">发球机器</td><td>每局第一分，你的发球可直接算 ACE（对方不能接）</td><td>进攻型</td></tr>
+                    <tr><td class="card-name">截击大师</td><td>网前截击若得手，额外抽一张牌</td><td>网前型</td></tr>
+                    <tr><td class="card-name">防守专家</td><td>每局可救一个看似出界的球，由你判定是否出界</td><td>防守型</td></tr>
+                    <tr><td class="card-name">反手天王</td><td>当被强制用反手时，效果反转为你加分而非对方</td><td>反制型</td></tr>
+                    <tr><td class="card-name">体能怪兽</td><td>每打完 3 局可恢复 1 张已用过的牌</td><td>续航型</td></tr>
+                    <tr><td class="card-name">心理大师</td><td>在破发点/赛点时，你的限制牌强制生效（不可被反击）</td><td>关键分型</td></tr>
+                    <tr><td class="card-name">谋士</td><td>开局多抽 2 张牌，每局可看一次对方手牌</td><td>信息型</td></tr>
+                </tbody>
+            </table>
+            <div class="tip">角色牌让两个人即使技术相近，打法风格也会完全不同——这才是三国杀式博弈的精髓。</div>
+        </div>
+
+        <h2>三、触发时机</h2>
+        <p>卡牌可在以下五个时机打出，不同牌有不同触发窗口：</p>
+        <div class="timing-grid">
+            <div class="timing-card"><h4>① 分前阶段</h4><p>每分开始、发球前。可打限制牌、增益牌、特殊牌</p></div>
+            <div class="timing-card"><h4>② 局前阶段</h4><p>每局开始。可打持续整局的效果牌（如角色强化）</p></div>
+            <div class="timing-card"><h4>③ 对方发球前</h4><p>对方准备发球瞬间。可打"偷袭""弱手发球"</p></div>
+            <div class="timing-card"><h4>④ 击球过程中</h4><p>回合进行中。可打即时牌反击、神之手救球</p></div>
+            <div class="timing-card"><h4>⑤ 关键时刻</h4><p>破发点/赛点。可叠加 2 张牌（平时仅 1 张）</p></div>
+        </div>
+
+        <h2>四、一分的完整流程</h2>
+        <div class="flow">
+            <span class="flow-step">① 抽牌</span><span class="flow-arrow">→</span>
+            <span class="flow-step">② 出牌（限制/增益）</span><span class="flow-arrow">→</span>
+            <span class="flow-step">③ 发球</span><span class="flow-arrow">→</span>
+            <span class="flow-step">④ 回合（可即时牌）</span><span class="flow-arrow">→</span>
+            <span class="flow-step">⑤ 结算</span>
+        </div>
+        <ol>
+            <li><strong>抽牌阶段：</strong>本分开始，每人抽 1 张（开局每人 5 张）</li>
+            <li><strong>出牌阶段：</strong>双方轮流出牌，可出限制牌作用于对方、增益牌作用于自己。可"反击"抵消</li>
+            <li><strong>发球阶段：</strong>发球方发球，可在抛球前打"偷袭""弱手发球"等即时牌</li>
+            <li><strong>击球阶段：</strong>双方回球，期间可随时打即时牌（神之手救球、反击、闪避等）</li>
+            <li><strong>结算阶段：</strong>得分方抽 1 张；若破发则抽 2 张；超出手牌上限需弃牌</li>
+        </ol>
+
+        <h2>五、抽牌与手牌</h2>
+        <table>
+            <thead><tr><th>时机</th><th>抽牌数</th><th>说明</th></tr></thead>
+            <tbody>
+                <tr><td>开局</td><td>每人 5 张</td><td>同时抽，角色牌额外抽</td></tr>
+                <tr><td>每分开始</td><td>1 张</td><td>发球方先抽</td></tr>
+                <tr><td>得分</td><td>1 张</td><td>得分方抽</td></tr>
+                <tr><td>破发</td><td>2 张</td><td>破发方额外奖励</td></tr>
+                <tr><td>命运抽牌（卡）</td><td>2 张</td><td>打出该特殊牌立即抽</td></tr>
+            </tbody>
+        </table>
+        <div class="warn"><strong>手牌上限：</strong>7 张。超出需在结算阶段弃牌至 7 张。弃掉的牌进入弃牌堆，整局不再使用（除非"复活"类卡牌）。</div>
+
+        <h2>六、稀有度与使用限制</h2>
+        <table>
+            <thead><tr><th>稀有度</th><th>每场限用</th><th>牌堆占比建议</th><th>说明</th></tr></thead>
+            <tbody>
+                <tr><td class="rarity r-N">N 普通 ★</td><td>无限制</td><td>约 50%</td><td>基础牌，频繁使用</td></tr>
+                <tr><td class="rarity r-R">稀有 R ★★</td><td>每场 4 次</td><td>约 30%</td><td>中等强度</td></tr>
+                <tr><td class="rarity r-SR">史诗 SR ★★★</td><td>每场 2 次</td><td>约 15%</td><td>扭转局势</td></tr>
+                <tr><td class="rarity r-SSR">传说 SSR ★★★★</td><td>每场 1 次</td><td>约 5%</td><td>终极杀招</td></tr>
+            </tbody>
+        </table>
+        <div class="tip"><strong>平衡规则：</strong>同一类型的限制牌（如两张"区域限制"）不可在本分连续使用，必须间隔至少 1 分。防止一方无限叠加限制。</div>
+
+        <h2>七、特殊规则与变体</h2>
+        <h3>单打 vs 双打</h3>
+        <ul>
+            <li><strong>单打：</strong>"人员限制"类牌不生效，自动当"弃牌"处理可换抽 1 张</li>
+            <li><strong>双打：</strong>人员限制牌生效；"双倍回合"可两人各击一次；搭档可共享手牌上限（共 10 张）</li>
+        </ul>
+        <h3>关键分加成</h3>
+        <ul>
+            <li>破发点、局点、赛点：可叠加打出 2 张牌（平时仅 1 张）</li>
+            <li>赛点时：双方禁用 SSR 传说牌（防止一招定胜负）</li>
+        </ul>
+        <h3>推荐赛制</h3>
+        <ul>
+            <li><strong>速玩：</strong>一盘制，抢七决胜</li>
+            <li><strong>标准：</strong>三盘两胜</li>
+            <li><strong>硬核：</strong>五盘三胜 + 每盘重置手牌</li>
+        </ul>
+
+        <h2>八、实战 Tips</h2>
+        <div class="tip"><strong>开局策略：</strong>先用普通限制牌试探对方是否有"反击"，把稀有牌留到关键分。</div>
+        <div class="tip"><strong>反击博弈：</strong>对方出限制牌时，是否打"反击"取决于你判断对方还有几张牌。手牌少时果断反击。</div>
+        <div class="tip"><strong>SSR 时机：</strong>"时间停止"留到对方手牌满、你想连得 2 分时打出；"乾坤大挪移"留到你 0-40 落后时翻盘。</div>
+        <div class="tip"><strong>角色配合：</strong>"心理大师"+ 关键分限制牌 = 必杀组合；"防守专家"+ 神之手 = 极致龟缩流。</div>
+        <div class="warn"><strong>公平原则：</strong>所有判罚以场上实际为准，卡牌效果仅作用于"规则允许的范围内"。出牌后双方须明确确认效果再开球。</div>
+
+        <h2>九、快速上手清单</h2>
+        <ol>
+            <li>打印或手写一副卡牌（建议 60 张：限制 24 / 增益 12 / 即时 12 / 特殊 8 / 武将 4）</li>
+            <li>每人抽 1 张武将牌，公开亮出</li>
+            <li>每人抽 5 张手牌</li>
+            <li>正常猜先发球，开始比赛</li>
+            <li>每分按"抽牌→出牌→发球→回合→结算"流程进行</li>
+            <li>得分方抽 1 张，破发方抽 2 张</li>
+            <li>记得标记已用过的稀有牌次数（用硬币或纸条）</li>
+        </ol>
+    </div>
+
+    
+
+    <script>
+        function createStars() {
+            const c = document.getElementById('stars-bg');
+            for (let i = 0; i < 60; i++) {
+                const s = document.createElement('div'); s.className = 'star';
+                const sz = Math.random() * 3 + 1;
+                s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*4}s`;
+                c.appendChild(s);
+            }
+        }
+        createStars();
+    </script>
+<div id="siteFooterMount"></div>
+    <script src="/assets/site.js"></script>
+    <script type="module" src="/assets/tennis-game.js"></script>
+</body>
+</html>

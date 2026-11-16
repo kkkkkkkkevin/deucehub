@@ -1,0 +1,118 @@
+/* app.wxss - 全局样式 */
+
+/* 温网配色变量 */
+page {
+  --wimbledon-green: #2d5a27;
+  --wimbledon-green-light: #3a7a32;
+  --wimbledon-green-dark: #1e3d1a;
+  --wimbledon-purple: #5b2c83;
+  --wimbledon-purple-light: #7d4ba0;
+  --court-cream: #f5f3ed;
+  --court-white: #ffffff;
+  --ball-yellow: #d4e157;
+  --ball-yellow-deep: #c0d020;
+  --medal-gold: #d4a843;
+  --medal-silver: #b0b0b0;
+  --medal-bronze: #cd7f32;
+  --text-primary: #1a1a1a;
+  --text-secondary: #666666;
+  --text-light: #999999;
+  --border-color: #e0e0e0;
+
+  background-color: var(--court-cream);
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
+  color: var(--text-primary);
+  font-size: 28rpx;
+  line-height: 1.6;
+}
+
+/* 通用容器 */
+.container {
+  padding: 0 32rpx;
+  box-sizing: border-box;
+}
+
+/* 温网风格卡片 */
+.card {
+  background: var(--court-white);
+  border-radius: 16rpx;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.06);
+}
+
+/* 标题样式 */
+.section-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: var(--wimbledon-green);
+  margin-bottom: 20rpx;
+}
+
+/* 按钮样式 */
+.btn-primary {
+  background: linear-gradient(135deg, var(--wimbledon-green) 0%, var(--wimbledon-green-light) 100%);
+  color: #fff;
+  border: none;
+  border-radius: 48rpx;
+  padding: 24rpx 64rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 4rpx 16rpx rgba(45, 90, 39, 0.3);
+}
+
+.btn-primary::after {
+  border: none;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--wimbledon-green);
+  border: 2rpx solid var(--wimbledon-green);
+  border-radius: 48rpx;
+  padding: 22rpx 60rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+.btn-secondary::after {
+  border: none;
+}
+
+/* 紫色强调色 */
+.text-purple {
+  color: var(--wimbledon-purple);
+}
+
+.text-green {
+  color: var(--wimbledon-green);
+}
+
+.text-yellow {
+  color: var(--ball-yellow-deep);
+}
+
+/* 弹性布局辅助 */
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

@@ -1,0 +1,59 @@
+<!-- pages/mbti/result.wxml - 结果页 -->
+<view class="result-page">
+  <!-- 顶部大图 -->
+  <view class="result-hero">
+    <view class="hero-deco"></view>
+    <view class="hero-content">
+      <image class="species-big-img" src="{{result.img}}" mode="aspectFit"></image>
+      <view class="species-name">{{result.name}}</view>
+      <view class="species-code">{{result.code}}</view>
+    </view>
+  </view>
+
+  <!-- 火力值 -->
+  <view class="fire-power-card">
+    <view class="fp-row">
+      <text class="fp-title">火力值</text>
+      <text class="fp-number">{{result.firePower}}</text>
+      <text class="fp-max">/100</text>
+    </view>
+    <view class="fp-bar">
+      <view class="fp-fill" style="width: {{result.firePower}}%"></view>
+      <view class="fp-glow" style="width: {{result.firePower}}%"></view>
+    </view>
+  </view>
+
+  <!-- 物种描述 -->
+  <view class="desc-card">
+    <text class="desc-text">{{result.desc}}</text>
+    <view class="tags-row">
+      <view class="tag" wx:for="{{result.tags}}" wx:key="*this">{{item}}</view>
+    </view>
+  </view>
+
+  <!-- 四维解析 -->
+  <view class="dim-card">
+    <view class="card-title">四维解析</view>
+    <view class="dim-item" wx:for="{{dimResults}}" wx:key="key">
+      <view class="dim-info">
+        <text class="dim-name">{{item.name}}</text>
+        <text class="dim-winner">{{item.winner}}</text>
+      </view>
+      <view class="dim-bar-track">
+        <view class="dim-bar-left {{item.isLeftWin ? 'win-left' : ''}}"></view>
+        <view class="dim-bar-right {{!item.isLeftWin ? 'win-right' : ''}}"></view>
+      </view>
+      <view class="dim-labels">
+        <text class="dim-label {{item.isLeftWin ? 'label-active-green' : ''}}">{{item.leftLabel}}</text>
+        <text class="dim-label {{!item.isLeftWin ? 'label-active-purple' : ''}}">{{item.rightLabel}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 按钮 -->
+  <view class="result-actions">
+    <button class="btn-primary btn-retry" bindtap="onRetry">再来一次</button>
+    <button class="btn-secondary btn-share" open-type="share">分享给朋友</button>
+  </view>
+  <view style="height: 40rpx;"></view>
+</view>
