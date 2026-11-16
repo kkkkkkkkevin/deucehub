@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>店长看板 · DeuceHub 网球场管理系统</title>
+<meta name="description" content="DeuceHub 店长看板：会员活跃、参赛趋势、积分分布、排名变动，一屏看清俱乐部经营健康度。">
+<meta name="robots" content="noindex,follow">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<style>
+  :root{
+    --green:#84B81A; --green-deep:#6A9A12; --green-soft:#F1F7E4;
+    --ink:#0F2A3D; --body:#3A5160; --muted:#7A8A96; --line:#E4E9EC; --mist:#F5F8F0;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:#F4F6F3;color:var(--body);line-height:1.5}
+  .top{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
+  .top__inner{max-width:1200px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+  .logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+  .logo__mark{width:34px;height:34px;border-radius:9px;background:var(--green);display:flex;align-items:center;justify-content:center}
+  .logo__mark svg{width:24px;height:24px}
+  .logo__name{font-weight:800;font-size:18px}
+  .logo__name b{color:var(--green-deep)}
+  .top__nav{display:flex;gap:6px}
+  .top__nav a{padding:7px 14px;border-radius:8px;font-size:14px;color:var(--body);text-decoration:none}
+  .top__nav a:hover{background:var(--green-soft);color:var(--green-deep)}
+  .top__nav a.active{background:var(--green-soft);color:var(--green-deep);font-weight:600}
+  .container{max-width:1200px;margin:0 auto;padding:28px 24px 60px}
+  .page-head{margin-bottom:22px}
+  .page-head h1{font-size:26px;color:var(--ink);font-weight:800}
+  .page-head p{color:var(--muted);font-size:14px;margin-top:4px}
+  .kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:22px}
+  .kpi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 16px}
+  .kpi__label{font-size:12px;color:var(--muted)}
+  .kpi__value{font-size:26px;font-weight:800;color:var(--ink);margin-top:6px;line-height:1.1}
+  .kpi__value span{font-size:13px;font-weight:600;color:var(--muted);margin-left:3px}
+  .kpi__sub{font-size:12px;color:var(--muted);margin-top:6px}
+  .kpi--accent{background:var(--green);border-color:var(--green)}
+  .kpi--accent .kpi__label,.kpi--accent .kpi__value span,.kpi--accent .kpi__sub{color:rgba(255,255,255,.85)}
+  .kpi--accent .kpi__value{color:#fff}
+  .grid{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px}
+  .card h3{font-size:15px;color:var(--ink);margin-bottom:14px;font-weight:700}
+  .chart-wrap{position:relative;height:260px}
+  .mobility{display:flex;flex-direction:column;gap:12px}
+  .mob-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:10px;background:var(--mist)}
+  .mob-item__label{font-size:13px;color:var(--body)}
+  .mob-item__val{font-weight:700;font-size:16px}
+  .up{color:var(--green-deep)} .down{color:#D9534F} .same{color:var(--muted)}
+  .board{width:100%;border-collapse:collapse;font-size:14px}
+  .board th,.board td{padding:10px 8px;text-align:left;border-bottom:1px solid var(--line)}
+  .board thead th{font-size:12px;color:var(--muted);font-weight:600}
+  .board tbody tr:last-child td{border-bottom:none}
+  .board .r{font-weight:700;color:var(--green-deep)}
+  .chg{font-size:12px;font-weight:600}
+  .foot{text-align:center;color:var(--muted);font-size:12px;margin-top:30px}
+  .foot a{color:var(--green-deep);text-decoration:none}
+  @media(max-width:1024px){.kpis{grid-template-columns:repeat(3,1fr)}.grid{grid-template-columns:1fr}}
+  @media(max-width:560px){.kpis{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top__inner">
+    <a class="logo" href="/">
+      <span class="logo__mark"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="9" fill="#fff"/><path d="M10.5 9 Q17 16 10.5 23" fill="none" stroke="#84B81A" stroke-width="1.6" stroke-linecap="round"/><path d="M21.5 9 Q14.5 16 21.5 23" fill="none" stroke="#84B81A" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+      <span class="logo__name">Deuce<b>Hub</b></span>
+    </a>
+    <nav class="top__nav">
+      <a href="/">首页</a>
+      <a href="/ranking.html">排行榜</a>
+      <a href="/dashboard.html" class="active">店长看板</a>
+      <a href="/admin.html">管理后台</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <div class="page-head">
+    <h1>店长看板</h1>
+    <p>会员活跃、参赛趋势、积分结构一屏看清，数据来自俱乐部真实赛事积分。</p>
+  </div>
+
+  <div class="kpis" id="kpis">
+    <div class="kpi"><div class="kpi__label">会员总数</div><div class="kpi__value" id="k-total">—</div></div>
+    <div class="kpi kpi--accent"><div class="kpi__label">最新一站活跃</div><div class="kpi__value" id="k-active">—</div><div class="kpi__sub" id="k-rate">参赛率 —</div></div>
+    <div class="kpi"><div class="kpi__label">已办赛事</div><div class="kpi__value" id="k-tour">—<span>站</span></div></div>
+    <div class="kpi"><div class="kpi__label">累计发放积分</div><div class="kpi__value" id="k-pts">—</div></div>
+    <div class="kpi"><div class="kpi__label">人均积分</div><div class="kpi__value" id="k-avg">—</div></div>
+    <div class="kpi"><div class="kpi__label">榜首</div><div class="kpi__value" id="k-top" style="font-size:18px">—</div><div class="kpi__sub" id="k-top-pts"></div></div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>每站参赛人数趋势</h3>
+      <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>排名变动分布</h3>
+      <div class="mobility" id="mobility">
+        <div class="mob-item"><span class="mob-item__label">↑ 上升</span><span class="mob-item__val up" id="m-up">—</span></div>
+        <div class="mob-item"><span class="mob-item__label">↓ 下降</span><span class="mob-item__val down" id="m-down">—</span></div>
+        <div class="mob-item"><span class="mob-item__label">→ 不变</span><span class="mob-item__val same" id="m-same">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>会员积分分布</h3>
+      <div class="chart-wrap"><canvas id="distChart"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>积分榜 TOP 5</h3>
+      <table class="board" id="board">
+        <thead><tr><th>排名</th><th>学员</th><th>积分</th><th>变动</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="foot" id="foot">数据加载中…</div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+const fmt = n => n.toLocaleString('zh-CN');
+const chg = c => c > 0 ? `<span class="up">↑${c}</span>` : c < 0 ? `<span class="down">↓${Math.abs(c)}</span>` : `<span class="same">—</span>`;
+
+function render(d){
+  document.getElementById('k-total').textContent = fmt(d.members.total);
+  document.getElementById('k-active').textContent = fmt(d.members.active);
+  document.getElementById('k-rate').textContent = '参赛率 ' + Math.round(d.members.activeRate*100) + '%';
+  document.getElementById('k-tour').innerHTML = fmt(d.tournaments.count) + '<span>站</span>';
+  document.getElementById('k-pts').textContent = fmt(d.points.total);
+  document.getElementById('k-avg').textContent = fmt(d.points.average);
+  document.getElementById('k-top').textContent = d.points.top ? d.points.top.name : '—';
+  document.getElementById('k-top-pts').textContent = d.points.top ? fmt(d.points.top.total) + ' 分' : '';
+  document.getElementById('m-up').textContent = fmt(d.mobility.up);
+  document.getElementById('m-down').textContent = fmt(d.mobility.down);
+  document.getElementById('m-same').textContent = fmt(d.mobility.same);
+
+  // 榜单
+  const tb = document.querySelector('#board tbody');
+  tb.innerHTML = d.leaderboard.map(p =>
+    `<tr><td class="r">${p.rank}</td><td>${p.name}</td><td>${fmt(p.total)}</td><td class="chg">${chg(p.change)}</td></tr>`
+  ).join('');
+
+  // 参赛趋势
+  new Chart(document.getElementById('trendChart'), {
+    type:'bar',
+    data:{
+      labels: d.tournamentTrend.map(t => t.name.replace(/\s+赢满贯.*$/, '').replace(/\s+伟劲.*$/,'')),
+      datasets:[{
+        label:'参赛人数', data: d.tournamentTrend.map(t=>t.participants),
+        backgroundColor:'#84B81A', borderRadius:6, barThickness:28,
+      }]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{precision:0}}}}
+  });
+
+  // 积分分布
+  new Chart(document.getElementById('distChart'), {
+    type:'bar',
+    data:{
+      labels: d.pointsDistribution.map(t=>t.range),
+      datasets:[{
+        label:'会员数', data: d.pointsDistribution.map(t=>t.count),
+        backgroundColor:'#B7D47B', borderRadius:6, barThickness:32,
+      }]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{precision:0}}}}
+  });
+
+  document.getElementById('foot').innerHTML =
+    '数据更新于 ' + new Date(d.updatedAt).toLocaleString('zh-CN') +
+    ' · <a href="/admin.html">去管理后台录入成绩 →</a>';
+}
+
+fetch('/api/dashboard').then(r=>r.json()).then(render).catch(e=>{
+  document.getElementById('foot').textContent = '数据加载失败，请稍后重试';
+});
+</script>
+</body>
+</html>

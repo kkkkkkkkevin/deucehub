@@ -1,15 +1,20 @@
 /**
- * server.js — rainbowbuddy.top 站点服务（现托管「球盟 BallLink」官网）
+ * server.js — rainbowbuddy.top 站点服务（托管 DeuceHub 官网 + 界外网球演示）
  *
- * API 接口（历史遗留，已无前端调用）：
+ * API 接口：
  *   GET  /api/rankings  /api/health
+ *   POST /api/admin/login  /api/admin/logout
+ *   GET/POST /api/admin/data  （需 Bearer token）
  *
  * 静态资源：
- *   /              — 球盟官网首页（index.html）
+ *   /              — DeuceHub 官网首页
  *   /pricing.html  — 定价详情页
+ *   /ranking.html  — 界外网球俱乐部 · 积分排行榜（客户案例演示）
+ *   /card.html     — 选手名片
+ *   /admin.html    — 管理后台（录入成绩、维护排名）
+ *   /robots.txt /sitemap.xml /llms.txt — 抓取与索引声明
  *
- * 兜底路由：任何已下线的旧路径（/matches.html /ranking.html /admin 等）
- * 浏览器访问时 302 跳回首页，避免裸 Express 404。
+ * 兜底路由：/admin 短链 301 到 /admin.html；其余未知路径返回 404 + 404.html。
  */
 const express = require('express');
 const cors = require('cors');
@@ -21,7 +26,14 @@ const config = require('./config');
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: '5mb' }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'), {
+  maxAge: '1h',
+  setHeaders(res, filePath) {
+    if (filePath.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
+    }
+  }
+}));
 
 /* ========== 数据存储（JSON 文件） ========== */
 const DATA_FILE = config.DATA_FILE;
@@ -85,6 +97,83 @@ app.get('/api/rankings', (req, res) => {
         updatedBy: data.updatedBy,
         siteTitle: config.SITE_TITLE,
     });
+});
+
+// 店长看板：聚合运营指标（面向页面，一次返回看板所需全部数据）
+app.get('/api/dashboard', (req, res) => {
+  const data = readData();
+  const players = data.players || [];
+  const tournaments = data.tournaments || [];
+  const lastIdx = Math.max(0, tournaments.length - 1);
+
+  const totalMembers = players.length;
+  const activeMembers = players.filter(p => (p.events?.[lastIdx] || 0) > 0).length;
+  const totalPoints = players.reduce((s, p) => s + (p.total || 0), 0);
+  const avgPoints = totalMembers ? Math.round(totalPoints / totalMembers) : 0;
+
+  const top = [...players].sort((a, b) => (b.total || 0) - (a.total || 0))[0] || null;
+
+  // 排名变动分布
+  let up = 0, down = 0, same = 0;
+  players.forEach(p => {
+    const c = p.change || 0;
+    if (c > 0) up++; else if (c < 0) down++; else same++;
+  });
+
+  // 每站参赛人数 + 当站积分
+  const tournamentTrend = tournaments.map((t, i) => {
+    const participants = players.filter(p => (p.events?.[i] || 0) > 0).length;
+    const points = players.reduce((s, p) => s + (p.events?.[i] || 0), 0);
+    return { id: t.id, name: t.name, date: t.date, participants, points };
+  });
+
+  // 积分分布
+  const tiers = [
+    { range: '0-99', min: 0, max: 100 },
+    { range: '100-199', min: 100, max: 200 },
+    { range: '200-299', min: 200, max: 300 },
+    { range: '300-499', min: 300, max: 500 },
+    { range: '500-799', min: 500, max: 800 },
+    { range: '800+', min: 800, max: Infinity },
+  ];
+  const pointsDistribution = tiers.map(t => ({
+    range: t.range,
+    count: players.filter(p => {
+      const v = p.total || 0;
+      return v >= t.min && v < t.max;
+    }).length,
+  }));
+
+  // TOP 5 榜单
+  const leaderboard = sortByRank(players).slice(0, 5).map(p => ({
+    rank: p.rank, name: p.name, total: p.total, change: p.change || 0,
+  }));
+
+  res.json({
+    members: {
+      total: totalMembers,
+      active: activeMembers,
+      activeRate: totalMembers ? +(activeMembers / totalMembers).toFixed(2) : 0,
+    },
+    tournaments: {
+      count: tournaments.length,
+      latest: tournaments.length ? {
+        name: tournaments[lastIdx].name,
+        date: tournaments[lastIdx].date,
+        participants: activeMembers,
+      } : null,
+    },
+    points: {
+      total: totalPoints,
+      average: avgPoints,
+      top: top ? { name: top.name, total: top.total } : null,
+    },
+    mobility: { up, down, same },
+    tournamentTrend,
+    pointsDistribution,
+    leaderboard,
+    updatedAt: data.updatedAt,
+  });
 });
 
 // 管理员登录
@@ -180,12 +269,13 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', time: new Date().toISOString() });
 });
 
-/* ========== 兜底：整站替换后，旧的页面/路由（/matches.html /ranking.html
-   /werewolf.html /admin 等）已下线；浏览器访问时 302 跳回新官网首页，
-   避免裸 Express 404「Cannot GET /xxx」；非 HTML 请求返回 404 JSON。 ========== */
+/* ========== 兜底：/admin 短链跳转到 /admin.html；其余未知路径返回 404.html ========== */
 app.use((req, res) => {
+  if (req.method === 'GET' && req.path === '/admin') {
+    return res.redirect(301, '/admin.html');
+  }
   if (req.method === 'GET') {
-    return res.redirect('/');
+    return res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
   }
   res.status(404).json({ error: 'Not Found' });
 });
@@ -193,7 +283,7 @@ app.use((req, res) => {
 /* ========== 启动 ========== */
 app.listen(config.PORT, () => {
   console.log('┌─────────────────────────────────────────────┐');
-  console.log('│  界外网球积分排行榜服务已启动                  │');
+  console.log('│  DeuceHub 官网 + 界外网球演示 已启动          │');
   console.log('├─────────────────────────────────────────────┤');
   console.log('│  公共页面:  http://localhost:' + config.PORT + '              │');
   console.log('│  后台管理:  http://localhost:' + config.PORT + '/admin         │');

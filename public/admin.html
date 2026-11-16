@@ -489,6 +489,7 @@ function AdminApp() {
         </div>
         <Space>
           {dirty ? <Tag color="orange">有未保存的修改</Tag> : <Tag color="green">已同步</Tag>}
+          <a href="/dashboard.html" target="_blank" rel="noopener" style={{ textDecoration: 'none' }}><Button>店长看板</Button></a>
           <Button onClick={doLogout}>登出</Button>
         </Space>
       </div>
